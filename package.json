@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.13",
+    "@nextui-org/react": "^2.4.6",
     "aws-amplify": "^6.4.0",
+    "framer-motion": "^11.3.21",
     "next": "14.1.1",
+    "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -21,6 +24,9 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.7",
     "typescript": "^5.3.2"
   }
 }

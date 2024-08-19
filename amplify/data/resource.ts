@@ -7,22 +7,101 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
+  User: a.model({
+    userId: a.id().required(),
+    name: a.string(),
+    email: a.email().required(),
+    username: a.string().required(),
+    zipCode: a.integer(),
+    latitude: a.float(),
+    longitude: a.float(),
+    meetupRadius: a.float(),
+    phone: a.phone(),
+    picture: a.url(),
+    rating: a.float(),
+    status: a.enum(["Active", "Flagged", "Suspended", "Banned"]),
+    lastLogin: a.datetime(),
+    emailVerified: a.boolean().default(false),
+    phoneVerified: a.boolean().default(false),
+    plan: a.enum(["Free"]),
+    smsNotifications: a.boolean().default(false),
+    emailNotifications: a.boolean().default(false),
+    notificationPreference: a.enum(["Phone", "Email"]),
+    languagePreference: a.enum(["English"]),
+    listings: a.hasMany("Listing", "userId"),
+    buyer: a.hasMany("Transaction", "buyerId"),
+    seller: a.hasMany("Transaction", "sellerId"),
+    conversationsAsSeller: a.hasMany("Conversation", "sellerId"),
+    conversationsAsEnquirer: a.hasMany("Conversation", "enquirerId"),
+    messagesSent: a.hasMany("Message", "senderId"),
+    messagesReceived: a.hasMany("Message", "recipientId")
+  }).authorization((allow) => [allow.authenticated()]),
+
+  Listing: a.model({
+    title: a.string(),
+    description: a.string(),
+    category: a.string(),
+    price: a.float(),
+    zipCode: a.integer(),
+    latitude: a.float(),
+    longitude: a.float(),
+    meetupRadius: a.float(),
+    deliveryRadius: a.float(),
+    status: a.enum(["Active", "Sold", "Expired"]),
+    rating: a.float(),
+    reviews: a.hasMany("Review", "listingId"),
+    images: a.string().array(),
+    userId: a.id().required(),
+    user: a.belongsTo("User", "userId"),
+    transaction: a.hasOne("Transaction", "listingId"),
+    conversations: a.hasMany("Conversation", "listingId")
+  }).authorization((allow) => [allow.authenticated()]),
+
+  Transaction: a.model({
+    listingId: a.id().required(),
+    buyerId: a.id().required(),
+    sellerId: a.id().required(),
+    status: a.enum(["Pending", "Completed", "Cancelled"]),
+    amount: a.float().required(),
+    paymentMethod: a.enum(["Cash", "Card", "Other"]),
+    completedAt: a.datetime().required(),
+    comments: a.string(),
+    listing: a.belongsTo("Listing", "listingId"),
+    buyer: a.belongsTo("User", "buyerId"),
+    seller: a.belongsTo("User", "sellerId")
+  }).secondaryIndexes((index) => [index("buyerId"), index("sellerId"), index("listingId")]),
+
+  Conversation: a.model({
+    listingId: a.id().required(),
+    enquirerId: a.id().required(),
+    sellerId: a.id().required(),
+    lastMessageAt: a.datetime(),
+    messages: a.hasMany("Message", "conversationId"),
+    listing: a.belongsTo("Listing", "listingId"),
+    seller: a.belongsTo("User", "sellerId"),
+    enquirer: a.belongsTo("User", "enquirerId")
+  }).secondaryIndexes((index) => [index("listingId")]),
+
+  Message: a.model({
+    conversationId: a.id().required(),
+    senderId: a.id().required(),
+    recipientId: a.id().required(),
+    content: a.string().required(),
+    sentAt: a.datetime().required(),
+    isRead: a.boolean().default(false),
+    conversation: a.belongsTo("Conversation", "conversationId"),
+    sender: a.belongsTo("User", "senderId"),
+    recipient: a.belongsTo("User", "recipientId")
+  }).secondaryIndexes((index) => [index("conversationId")])
 });
+
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: 'iam',
   },
 });
 
