@@ -11,7 +11,7 @@ const schema = a.schema({
     userId: a.id().required(),
     name: a.string(),
     email: a.email().required(),
-    username: a.string().required(),
+    username: a.string(),
     zipCode: a.integer(),
     latitude: a.float(),
     longitude: a.float(),
