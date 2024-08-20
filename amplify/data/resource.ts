@@ -69,7 +69,8 @@ const schema = a.schema({
     listing: a.belongsTo("Listing", "listingId"),
     buyer: a.belongsTo("User", "buyerId"),
     seller: a.belongsTo("User", "sellerId")
-  }).secondaryIndexes((index) => [index("buyerId"), index("sellerId"), index("listingId")]),
+  }).secondaryIndexes((index) => [index("buyerId"), index("sellerId"), index("listingId")])
+  .authorization((allow) => [allow.authenticated()]),
 
   Conversation: a.model({
     listingId: a.id().required(),
@@ -80,7 +81,8 @@ const schema = a.schema({
     listing: a.belongsTo("Listing", "listingId"),
     seller: a.belongsTo("User", "sellerId"),
     enquirer: a.belongsTo("User", "enquirerId")
-  }).secondaryIndexes((index) => [index("listingId")]),
+  }).secondaryIndexes((index) => [index("listingId")])
+  .authorization((allow) => [allow.authenticated()]),
 
   Message: a.model({
     conversationId: a.id().required(),
@@ -93,6 +95,7 @@ const schema = a.schema({
     sender: a.belongsTo("User", "senderId"),
     recipient: a.belongsTo("User", "recipientId")
   }).secondaryIndexes((index) => [index("conversationId")])
+  .authorization((allow) => [allow.authenticated()])
 });
 
 
