@@ -49,7 +49,6 @@ const schema = a.schema({
     deliveryRadius: a.float(),
     status: a.enum(["Active", "Sold", "Expired"]),
     rating: a.float(),
-    reviews: a.hasMany("Review", "listingId"),
     images: a.string().array(),
     userId: a.id().required(),
     user: a.belongsTo("User", "userId"),
