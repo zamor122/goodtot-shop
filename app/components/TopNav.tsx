@@ -1,13 +1,27 @@
 "use client"
 
-import {Avatar, Button, Image, Input, Navbar} from "@nextui-org/react";
+import {Image, Input, Navbar} from "@nextui-org/react";
 import Link from "next/link";
-import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {useCallback} from "react";
+import AuthButton, {User} from "../auth/components/AuthButton";
 import {ThemeSwitcher} from "./Theme/ThemeSwitcher";
-import AuthButton from "../auth/components/AuthButton";
 
-export default function TopNav() {
-  const [user, setUser] = useState(null);
+interface IProps {
+  user: User | null;
+  showAuthButton?: boolean;
+}
+
+export default function TopNav({user, showAuthButton=true}: IProps) {
+  const router = useRouter();
+
+  const UserProfile = useCallback(() => {
+    if(showAuthButton) {
+      return <AuthButton user={user} />
+    }
+    return null;
+  }, [user, router]);
+
   return (
     <Navbar position="sticky" maxWidth="full" className="flex items-center justify-between h-16 bg-emerald-400 border-b md:px-6">
       <Link href="/" className="hidden sm:flex items-center gap-2" prefetch={true}>
@@ -23,7 +37,7 @@ export default function TopNav() {
       </div>
       <div className="flex">
         <ThemeSwitcher />
-        <AuthButton loading={false} user={null} />
+        <UserProfile />
       </div>
     </Navbar>
   );

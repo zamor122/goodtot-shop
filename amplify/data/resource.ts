@@ -37,6 +37,18 @@ const schema = a.schema({
     messagesReceived: a.hasMany("Message", "recipientId")
   }).authorization((allow) => [allow.authenticated()]),
 
+  Category: a.model({
+    categoryId: a.id().required(),
+    name: a.string().required(),
+    subcategories: a.hasMany("Subcategory", "categoryId")
+  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
+
+  Subcategory: a.model({
+    name: a.string().required(), 
+    categoryId: a.id().required(),
+    category: a.belongsTo("Category", "categoryId") 
+  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
+
   Listing: a.model({
     title: a.string(),
     description: a.string(),
@@ -54,7 +66,7 @@ const schema = a.schema({
     user: a.belongsTo("User", "userId"),
     transaction: a.hasOne("Transaction", "listingId"),
     conversations: a.hasMany("Conversation", "listingId")
-  }).authorization((allow) => [allow.authenticated()]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
 
   Transaction: a.model({
     listingId: a.id().required(),

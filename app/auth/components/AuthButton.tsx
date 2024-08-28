@@ -1,27 +1,74 @@
-import { Avatar, Button, CircularProgress } from "@nextui-org/react";
+"use client"; // Marking this as a client component
+
+import outputs from '@amplify';
+import { Avatar, Button, CircularProgress, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { Amplify } from 'aws-amplify';
+import { signOut } from "aws-amplify/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 
-type AuthButtonProps = {
-  user: any;
+Amplify.configure(outputs, { ssr: true });
+
+export interface User {
+  username?: string;
+  userId?: string;
+  signInDetails?: any; // Replace `any` with a specific type if known
   loading?: boolean;
-};
+}
 
-export default function AuthButton({ user, loading = false }: AuthButtonProps) {
-  if (loading) {
+interface IProps {
+  user: User | null;
+}
+
+export default function AuthButton({ user }: IProps) {
+  const router = useRouter();
+
+  const onSignOut = useCallback(async () => {
+    try {
+      await signOut();
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Sign out error: ", error);
+    }
+  }, [router, user]);
+
+  const UserProfile = useCallback(() => {
+    if (user?.loading) {
+      return (
+        <div className="flex items-center justify-center">
+          <CircularProgress aria-label="loading..." size="lg" />
+        </div>
+      );
+    }
+
+    if (user?.userId) {
+      return (
+        <Dropdown>
+          <DropdownTrigger>
+            <Avatar />
+          </DropdownTrigger>
+          <DropdownMenu aria-label="User Menu">
+            <DropdownItem key="home">
+              <Link href="/">Home</Link>
+            </DropdownItem>
+            <DropdownItem key="account">
+              <Link href="/account">Account</Link>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      );
+    }
+
     return (
-      <div className="flex items-center justify-center h-screen">
-        <CircularProgress aria-label="loading..." size="lg" />
-      </div>
+      <Link href="/auth">
+        <Button className="bg-amber-50 dark:bg-stone-700 text-sm font-bold">
+          Login
+        </Button>
+      </Link>
     );
-  }
+  }, [user, onSignOut]);
 
-  return user ? (
-    <Avatar />
-  ) : (
-    <Link href="/auth">
-      <Button className="bg-amber-50 dark:bg-stone-700 text-sm font-bold">
-        Login
-      </Button>
-    </Link>
-  );
+  return <UserProfile />;
 }

@@ -20,6 +20,7 @@ const useRouteStorage = () => {
     } else {
       router.push('/account'); // Redirect to a default route if no stored route is found
     }
+    router.refresh();
   };
 
   return { storeCurrentRoute, redirectToStoredRoute };

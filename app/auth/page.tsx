@@ -1,24 +1,40 @@
 "use client"
 
-import { Authenticator, Theme, ThemeProvider, useTheme } from '@aws-amplify/ui-react';
-import { Amplify } from 'aws-amplify';
-import outputs from '@amplify';
+import {Authenticator, Theme, ThemeProvider, useTheme} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import {useRouter} from 'next/navigation';
-import { Hub } from 'aws-amplify/utils';
-import {useState} from 'react';
 import {CircularProgress} from '@nextui-org/react';
+import {Hub} from 'aws-amplify/utils';
+import {useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
 import useRouteStorage from '../hooks/useRouteStorage';
-import {formFields} from './form/formFields';
 import {components} from './components/components';
-
-Amplify.configure(outputs, {ssr: true});
+import {formFields} from './form/formFields';
+import {useUser} from './context/User';
+import TopNav from '../components/TopNav';
+import {User} from './components/AuthButton';
+import {getCurrentUser} from 'aws-amplify/auth';
 
 export default function Page() {
   const router = useRouter()
   const { tokens } = useTheme();
   const { redirectToStoredRoute } = useRouteStorage();
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+        try {
+            setUser(prevState => ({ ...prevState, loading: true }));
+            const user = await getCurrentUser();
+            console.log("User from context: ", user);
+            setUser(user);
+        } catch (e) {
+            setUser(null);
+        } finally {
+            setUser(prevState => ({ ...prevState, loading: false }));
+        }
+      };
 
+      fetchUser();
+  }, []);
   const [loading, setLoading] = useState(false);
   const theme: Theme = {
     name: 'Auth Example Theme',
@@ -78,10 +94,11 @@ Hub.listen('auth', ({ payload }) => {
         redirectToStoredRoute();
         break;
       case 'signedOut':
-        router.push("/")
+        router.replace("/")
         break;
       case 'tokenRefresh':
-        router.push("/account")
+        router.replace("/account")
+        router.refresh();
         break;
       case 'tokenRefresh_failure':
         router.push("/")
@@ -99,6 +116,7 @@ Hub.listen('auth', ({ payload }) => {
   } catch (error) {
     throw new Error("Error while redirecting user");
   } finally {
+    router.refresh();
     setLoading(false);
   }
 });
@@ -110,21 +128,24 @@ if (loading) {
     </div>
   );
 }
-
+2
 
 
   return (
+    <>
+    <TopNav user={user} showAuthButton={false} />
     <div className="h-screen flex justify-center items-center">
     <ThemeProvider theme={theme}>
     <Authenticator loginMechanisms={['email']} formFields={formFields} components={components}>
       {({ signOut, user }) => (
-        <main>
+        <>
           <h1>Hello {user?.username}</h1>
           <button onClick={signOut}>Sign out</button>
-        </main>
+        </>
       )}
     </Authenticator>
     </ThemeProvider>
     </div>
+    </>
   );
 }

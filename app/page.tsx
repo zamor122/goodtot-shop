@@ -1,15 +1,34 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/WuQUIiJND1o
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import {Button, Card, CardBody, Input} from "@nextui-org/react"
-import Link from "next/link"
+"use client"
 
-export default function Component() {
+import {Button, Card, CardBody} from "@nextui-org/react"
+import Link from "next/link"
+import TopNav from "./components/TopNav"
+import {useEffect, useState} from "react";
+import {getCurrentUser} from "aws-amplify/auth";
+import {User} from "./auth/components/AuthButton";
+
+export default function Page() {
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+        try {
+            setUser(prevState => ({ ...prevState, loading: true }));
+            const user = await getCurrentUser();
+            console.log("User from context: ", user);
+            setUser(user);
+        } catch (e) {
+            setUser(null);
+        } finally {
+            setUser(prevState => ({ ...prevState, loading: false }));
+        }
+      };
+
+      fetchUser();
+  }, []);
   return (
+    <>
+    <TopNav user={user} />
     <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Featured Categories</h2>
@@ -187,7 +206,6 @@ export default function Component() {
             </div>
           </div>
         </section>
-      </main>
       <footer className="bg-muted py-6">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -207,6 +225,7 @@ export default function Component() {
         </div>
       </footer>
     </div>
+    </>
   )
 }
 
