@@ -1,12 +1,12 @@
 "use client"; // Marking this as a client component
 
 import outputs from '@amplify';
-import { Avatar, Button, CircularProgress, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
-import { Amplify } from 'aws-amplify';
-import { signOut } from "aws-amplify/auth";
+import {Avatar, Button, CircularProgress, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/react";
+import {Amplify} from 'aws-amplify';
+import {signOut} from "aws-amplify/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import {useRouter} from "next/navigation";
+import {useCallback} from "react";
 
 Amplify.configure(outputs, { ssr: true });
 
@@ -32,7 +32,7 @@ export default function AuthButton({ user }: IProps) {
     } catch (error) {
       console.error("Sign out error: ", error);
     }
-  }, [router, user]);
+  }, [router]);
 
   const UserProfile = useCallback(() => {
     if (user?.loading) {
@@ -68,7 +68,7 @@ export default function AuthButton({ user }: IProps) {
         </Button>
       </Link>
     );
-  }, [user, onSignOut]);
+  }, [user]);
 
   return <UserProfile />;
 }

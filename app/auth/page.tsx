@@ -3,16 +3,15 @@
 import {Authenticator, Theme, ThemeProvider, useTheme} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import {CircularProgress} from '@nextui-org/react';
+import {getCurrentUser} from 'aws-amplify/auth';
 import {Hub} from 'aws-amplify/utils';
 import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
+import TopNav from '../components/TopNav';
 import useRouteStorage from '../hooks/useRouteStorage';
+import {User} from './components/AuthButton';
 import {components} from './components/components';
 import {formFields} from './form/formFields';
-import {useUser} from './context/User';
-import TopNav from '../components/TopNav';
-import {User} from './components/AuthButton';
-import {getCurrentUser} from 'aws-amplify/auth';
 
 export default function Page() {
   const router = useRouter()

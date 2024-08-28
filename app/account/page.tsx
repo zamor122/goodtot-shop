@@ -1,11 +1,11 @@
 "use client"
 
+import {Button} from "@nextui-org/react";
 import {getCurrentUser, signOut} from "aws-amplify/auth";
+import {useRouter} from "next/navigation";
 import {useCallback, useEffect, useState} from "react";
 import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
-import {Button} from "@nextui-org/react";
-import {useRouter} from "next/navigation";
 
 export default function Page() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function Page() {
     } catch (error) {
       console.error("Sign out error: ", error);
     }
-  }, [router, user]);
+  }, [router]);
 
   useEffect(() => {
     const fetchUser = async () => {

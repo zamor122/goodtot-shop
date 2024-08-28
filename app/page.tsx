@@ -6,6 +6,7 @@ import TopNav from "./components/TopNav"
 import {useEffect, useState} from "react";
 import {getCurrentUser} from "aws-amplify/auth";
 import {User} from "./auth/components/AuthButton";
+import Image from "next/image";
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -89,7 +90,7 @@ export default function Page() {
             <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               <Card>
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={400}
@@ -113,7 +114,7 @@ export default function Page() {
                 </CardBody>
               </Card>
               <Card>
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={400}
@@ -137,7 +138,7 @@ export default function Page() {
                 </CardBody>
               </Card>
               <Card>
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={400}
@@ -161,7 +162,7 @@ export default function Page() {
                 </CardBody>
               </Card>
               <Card>
-                <img
+                <Image
                   src="/placeholder.svg"
                   alt="Product Image"
                   width={400}
