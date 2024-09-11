@@ -127,9 +127,9 @@ if (loading) {
     </div>
   );
 }
-2
 
 
+//TODO: fix this so that it redirects the user if landed on this page and they are already logged in
   return (
     <>
     <TopNav user={user} showAuthButton={false} />

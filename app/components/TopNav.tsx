@@ -2,9 +2,9 @@
 
 import {Image, Input, Navbar} from "@nextui-org/react";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
 import {useCallback} from "react";
 import AuthButton, {User} from "../auth/components/AuthButton";
+import CreateListingButton from "../listing/components/CreateListingButton";
 import {ThemeSwitcher} from "./Theme/ThemeSwitcher";
 
 interface IProps {
@@ -34,8 +34,9 @@ export default function TopNav({user, showAuthButton=true}: IProps) {
       <div className="relative flex-1 max-w-md">
         <Input type="search" placeholder="Search..." className="w-full rounded-lg" />
       </div>
-      <div className="flex">
+      <div className="flex gap-2">
         <ThemeSwitcher />
+        {user?.userId && <CreateListingButton /> }
         <UserProfile />
       </div>
     </Navbar>
