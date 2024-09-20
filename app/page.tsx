@@ -8,6 +8,7 @@ import {getCurrentUser} from "aws-amplify/auth";
 import {User} from "./auth/components/AuthButton";
 import Image from "next/image";
 
+
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {

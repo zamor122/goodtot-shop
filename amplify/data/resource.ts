@@ -66,7 +66,7 @@ const schema = a.schema({
     user: a.belongsTo("User", "userId"),
     transaction: a.hasOne("Transaction", "listingId"),
     conversations: a.hasMany("Conversation", "listingId")
-  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
+  }).authorization((allow) => [allow.guest().to(['read']), allow.authenticated()]),
 
   Transaction: a.model({
     listingId: a.id().required(),
@@ -112,10 +112,11 @@ const schema = a.schema({
 
 export type Schema = ClientSchema<typeof schema>;
 
+//check userPool or iam depending on what the permissions should be
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'userPool',
   },
 });
 

@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {useCallback, useEffect, useState} from "react";
 import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
+import ListingGrid from "../listing/components/ListingGrid";
 
 export default function Page() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function Page() {
     <div className="flex justify-center items-center bg-background">
       <span className="text-black dark:text-amber-50">Hi, your account</span>
       <Button onClick={onSignOut}>Sign out</Button>
+      <ListingGrid />
     </div>
     </>
   );
