@@ -12,6 +12,7 @@ import {SubmitHandler, useForm} from 'react-hook-form';
 import "react-image-gallery/styles/css/image-gallery.css";
 import {generateClient} from 'aws-amplify/data';
 import {type Schema} from '../../../amplify/data/resource';
+import {useRouter} from 'next/navigation';
 
 const client = generateClient<Schema>();
 
@@ -36,6 +37,7 @@ const categories = [
 ];
 
 export default function Page() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [zipcodeResponse, setZipcodeResponse] = useState<string | null>(null);
@@ -54,7 +56,6 @@ export default function Page() {
       try {
         setUser(prevState => ({...prevState, loading: true}));
         const user = await getCurrentUser();
-        console.log("User from context: ", user);
         setUser(user);
       } catch (e) {
         setUser(null);
@@ -79,9 +80,13 @@ export default function Page() {
         };
 
         client.models.Listing.create(listingData).then((response) => {
-          if (response.errors) {
-            setFormError(response.errors.)
+          if(response.errors) {
+            setFormError("Something happened while creating your listing. Try again later...")
+          } else {
+            router.push("/account");
           }
+        }).catch(() => {
+          setFormError("Something happened while creating your listing. Try again later...")
         })
       } catch (error) {
         setFormError(`An error ocurred: ${error}`)

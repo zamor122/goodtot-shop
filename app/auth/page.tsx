@@ -23,7 +23,6 @@ export default function Page() {
         try {
             setUser(prevState => ({ ...prevState, loading: true }));
             const user = await getCurrentUser();
-            console.log("User from context: ", user);
             setUser(user);
         } catch (e) {
             setUser(null);

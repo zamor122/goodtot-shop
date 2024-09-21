@@ -27,7 +27,6 @@ export default function Page() {
         try {
             setUser(prevState => ({ ...prevState, loading: true }));
             const user = await getCurrentUser();
-            console.log("User from context: ", user);
             setUser(user);
         } catch (e) {
             setUser(null);
@@ -39,12 +38,15 @@ export default function Page() {
       fetchUser();
   }, []);
 
+  //TODO: Move call to get user's listings here
+
   return (
     <>
     <TopNav user={user} />
-    <div className="flex justify-center items-center bg-background">
+    <div className="flex flex-col justify-center items-center bg-background">
       <span className="text-black dark:text-amber-50">Hi, your account</span>
       <Button onClick={onSignOut}>Sign out</Button>
+      {/* TODO: Should take a listings prop and pass to listingGrid */}
       <ListingGrid />
     </div>
     </>

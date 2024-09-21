@@ -11,12 +11,13 @@ import Image from "next/image";
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
+
+  //TODO: Call to GQL to get user's listings here
   useEffect(() => {
     const fetchUser = async () => {
         try {
             setUser(prevState => ({ ...prevState, loading: true }));
             const user = await getCurrentUser();
-            console.log("User from context: ", user);
             setUser(user);
         } catch (e) {
             setUser(null);
