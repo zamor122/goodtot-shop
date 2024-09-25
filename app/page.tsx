@@ -1,13 +1,17 @@
 "use client"
 
-import {Button, Card, CardBody} from "@nextui-org/react"
-import Link from "next/link"
-import TopNav from "./components/TopNav"
-import {useEffect, useState} from "react";
+import {Button} from "@nextui-org/react";
 import {getCurrentUser} from "aws-amplify/auth";
+import Link from "next/link";
+import {useEffect, useState} from "react";
 import {User} from "./auth/components/AuthButton";
-import Image from "next/image";
+import TopNav from "./components/TopNav";
+import useListings from "./hooks/useListings";
+import ListingGrid from "./listing/components/ListingGrid";
+import {type Schema} from '../amplify/data/resource';
+import {generateClient} from 'aws-amplify/data';
 
+const client = generateClient<Schema>();
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -28,6 +32,10 @@ export default function Page() {
 
       fetchUser();
   }, []);
+
+  const {loading, error, listings} = useListings();
+  
+
   return (
     <>
     <TopNav user={user} />
@@ -90,104 +98,11 @@ export default function Page() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              <Card>
-                <Image
-                  src="/placeholder.svg"
-                  alt="Product Image"
-                  width={400}
-                  height={300}
-                  className="rounded-t-md object-cover w-full h-48"
-                  style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                />
-                <CardBody className="p-4">
-                  <h3 className="text-lg font-medium mb-2">Product Name</h3>
-                  <p className="text-muted-foreground mb-4">Description of the product</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold">$49.99</span>
-                    <Link
-                      href="#"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      prefetch={false}
-                    >
-                      View
-                    </Link>
-                  </div>
-                </CardBody>
-              </Card>
-              <Card>
-                <Image
-                  src="/placeholder.svg"
-                  alt="Product Image"
-                  width={400}
-                  height={300}
-                  className="rounded-t-md object-cover w-full h-48"
-                  style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                />
-                <CardBody className="p-4">
-                  <h3 className="text-lg font-medium mb-2">Product Name</h3>
-                  <p className="text-muted-foreground mb-4">Description of the product</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold">$29.99</span>
-                    <Link
-                      href="#"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      prefetch={false}
-                    >
-                      View
-                    </Link>
-                  </div>
-                </CardBody>
-              </Card>
-              <Card>
-                <Image
-                  src="/placeholder.svg"
-                  alt="Product Image"
-                  width={400}
-                  height={300}
-                  className="rounded-t-md object-cover w-full h-48"
-                  style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                />
-                <CardBody className="p-4">
-                  <h3 className="text-lg font-medium mb-2">Product Name</h3>
-                  <p className="text-muted-foreground mb-4">Description of the product</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold">$79.99</span>
-                    <Link
-                      href="#"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      prefetch={false}
-                    >
-                      View
-                    </Link>
-                  </div>
-                </CardBody>
-              </Card>
-              <Card>
-                <Image
-                  src="/placeholder.svg"
-                  alt="Product Image"
-                  width={400}
-                  height={300}
-                  className="rounded-t-md object-cover w-full h-48"
-                  style={{ aspectRatio: "400/300", objectFit: "cover" }}
-                />
-                <CardBody className="p-4">
-                  <h3 className="text-lg font-medium mb-2">Product Name</h3>
-                  <p className="text-muted-foreground mb-4">Description of the product</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold">$59.99</span>
-                    <Link
-                      href="#"
-                      className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      prefetch={false}
-                    >
-                      View
-                    </Link>
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
+            <ListingGrid 
+              listings={listings} 
+              error={error} 
+              loading={loading} 
+            /> 
           </div>
         </section>
         <section className="py-12 md:py-16 lg:py-20 bg-muted">

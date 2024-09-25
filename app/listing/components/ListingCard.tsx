@@ -4,15 +4,15 @@ import {Card, CardBody, Image, Link, Skeleton} from "@nextui-org/react";
 
 type ListingType = Schema["Listing"]["createType"]
 interface IListingCardProps {
-  isLoaded: boolean;
+  loading: boolean;
   listing: ListingType
 }
 
-export default function ListingCard({isLoaded, listing}: IListingCardProps) {
+export default function ListingCard({loading, listing}: IListingCardProps) {
   if(listing) {
     const {title, description, price} = listing;
     return (
-      <Skeleton isLoaded={isLoaded}>
+      <Skeleton isLoaded={!loading}>
       <Card>
             <Image
               src="/placeholder.svg"

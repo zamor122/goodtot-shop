@@ -7,6 +7,7 @@ import {useCallback, useEffect, useState} from "react";
 import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
 import ListingGrid from "../listing/components/ListingGrid";
+import useUserListings from "../hooks/useUserListings";
 
 export default function Page() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function Page() {
   }, []);
 
   //TODO: Move call to get user's listings here
+  const {loading, listings, error} = useUserListings(user?.userId);
 
   return (
     <>
@@ -46,8 +48,13 @@ export default function Page() {
     <div className="flex flex-col justify-center items-center bg-background">
       <span className="text-black dark:text-amber-50">Hi, your account</span>
       <Button onClick={onSignOut}>Sign out</Button>
-      {/* TODO: Should take a listings prop and pass to listingGrid */}
-      <ListingGrid />
+      <section className="py-12 md:py-16 lg:py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-6">Listings</h2>
+          {/* TODO: Should take a listings prop and pass to listingGrid */}
+            <ListingGrid loading={loading} listings={listings} error={error} />
+        </div>
+      </section>
     </div>
     </>
   );

@@ -7,12 +7,12 @@ import {FileUploader} from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
 import {Button, Card, CardHeader, Input, Select, SelectItem, Textarea} from '@nextui-org/react';
 import {getCurrentUser} from 'aws-amplify/auth';
-import {FormEventHandler, useCallback, useEffect, useState} from 'react';
-import {SubmitHandler, useForm} from 'react-hook-form';
-import "react-image-gallery/styles/css/image-gallery.css";
 import {generateClient} from 'aws-amplify/data';
-import {type Schema} from '../../../amplify/data/resource';
 import {useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import "react-image-gallery/styles/css/image-gallery.css";
+import {type Schema} from '../../../amplify/data/resource';
 
 const client = generateClient<Schema>();
 
@@ -22,6 +22,8 @@ interface ListingFormInputs {
   price: number;
   zipcode: string;
   category: string;
+  files: string[];
+  status: Schema["Listing"]["createType"]["status"];
 }
 
 const categories = [
@@ -39,11 +41,13 @@ const categories = [
 export default function Page() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [files, setFiles] = useState<string[]>([]);
   const [pageLoading, setPageLoading] = useState<boolean>(false);
   const [zipcodeResponse, setZipcodeResponse] = useState<string | null>(null);
   const [zipcodeLoading, setZipcodeLoading] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const {register, handleSubmit, watch, formState: {errors}} = useForm<ListingFormInputs>({
+  const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
+  const {register, handleSubmit, watch, formState: {errors, isValid, isSubmitted}} = useForm<ListingFormInputs>({
     defaultValues: {
       title: "",
     }
@@ -70,24 +74,29 @@ export default function Page() {
 
   const onSubmit = async (data: ListingFormInputs) => {
     setPageLoading(true);
-    if (user?.userId) {
+    if (user?.userId && isValid && files.length > 0) {
+      const zipcode = parseInt(data.zipcode)
       try {
         const listingData = {
           title: data.title,
           price: data.price,
           description: data.description,
-          userId: user.userId
+          userId: user.userId,
+          zipCode: zipcode,
+          category: data.category,
+          isFeatured: false,
+          status: "Active",
+          images: files,
         };
 
-        client.models.Listing.create(listingData).then((response) => {
-          if(response.errors) {
-            setFormError("Something happened while creating your listing. Try again later...")
-          } else {
-            router.push("/account");
-          }
-        }).catch(() => {
-          setFormError("Something happened while creating your listing. Try again later...")
-        })
+        console.log("Listing Data: ", listingData)
+
+        const {errors, data: newListing} = await client.models.Listing.create(listingData)
+        if(errors && errors.length > 0) {
+          setFormError(`Error occurred while creating your listing: ${errors[0].message}`);
+        } else {
+          router.push("/account");
+        }
       } catch (error) {
         setFormError(`An error ocurred: ${error}`)
         console.error("Error response:", error);
@@ -120,7 +129,7 @@ export default function Page() {
 
   return (
     <>
-      <TopNav user={user} />
+      <TopNav user={user} showNewListingButton={false} />
       <div className="flex justify-center items-center h-screen w-full">
         <Card className="lg:w-3/5 transition-colors sm:w-11/12 divide-y pb-12 px-12">
           <CardHeader className="md:ml-8 ml-6 mt-8">
@@ -231,7 +240,12 @@ export default function Page() {
                 <Select
                   id="category"
                   label="Select a category"
-                  {...register("category")}
+                  {...register("category", {
+                    required: {
+                      value: true,
+                      message: "Category must be selected",
+                    },
+                  })}
                   className={`mt-1 block w-full ${errors.category ? "border-red-500" : ""}`}
                 >
                   {categories.map((category) => (
@@ -247,17 +261,32 @@ export default function Page() {
             <div className="mb-4">
               <FileUploader
                 acceptedFileTypes={['image/*']}
-                path="public/"
+                path="listing-pictures/"
                 maxFileCount={1}
                 isResumable
+                onUploadSuccess={({ key }) => {
+                  if (key) {
+                    setFiles((prevFiles) => {
+                      return [...prevFiles, key];
+                    });
+                  }
+                }}
+                onFileRemove={(file) => {
+                  setFiles((prevFiles) => {
+                    return prevFiles.filter((key) => key != `listing-pictures/${file.key}`);  // Remove the file key from the array
+                  });
+                }}
                 onUploadError={(error, {key}) => {
                   setFormError(`Error while uploading images, try again...${error}`)
                 }}
-              /></div>
+              />
+              {isSubmitted && files.length < 1 && <p className="text-red-500 text-sm">At least one file must be uploaded</p>}
+              </div>
 
             <Button
               type="submit"
               isLoading={pageLoading}
+              isDisabled={submitDisabled}
               className="w-full bg-emerald-400 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded"
             >
               Create Listing

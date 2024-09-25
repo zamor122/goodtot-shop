@@ -35,38 +35,39 @@ const schema = a.schema({
     conversationsAsEnquirer: a.hasMany("Conversation", "enquirerId"),
     messagesSent: a.hasMany("Message", "senderId"),
     messagesReceived: a.hasMany("Message", "recipientId")
-  }).authorization((allow) => [allow.authenticated()]),
+  }).authorization((allow) => [allow.guest().to(["read"]),allow.authenticated("userPools")]),
 
   Category: a.model({
     categoryId: a.id().required(),
     name: a.string().required(),
     subcategories: a.hasMany("Subcategory", "categoryId")
-  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated("userPools")]),
 
   Subcategory: a.model({
     name: a.string().required(), 
     categoryId: a.id().required(),
     category: a.belongsTo("Category", "categoryId") 
-  }).authorization((allow) => [allow.guest(), allow.authenticated()]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated("userPools")]),
 
   Listing: a.model({
-    title: a.string(),
+    title: a.string().required(),
     description: a.string(),
-    category: a.string(),
-    price: a.float(),
-    zipCode: a.integer(),
+    category: a.string().required(),
+    price: a.float().required(),
+    zipCode: a.integer().required(),
     latitude: a.float(),
     longitude: a.float(),
     meetupRadius: a.float(),
     deliveryRadius: a.float(),
     status: a.enum(["Active", "Sold", "Expired"]),
-    rating: a.float(),
+    rating: a.float().default(0.0),
     images: a.string().array(),
+    isFeatured: a.boolean().required().default(false),
     userId: a.id().required(),
     user: a.belongsTo("User", "userId"),
     transaction: a.hasOne("Transaction", "listingId"),
     conversations: a.hasMany("Conversation", "listingId")
-  }).authorization((allow) => [allow.guest().to(['read']), allow.authenticated()]),
+  }).authorization((allow) => [allow.guest().to(["read"]), allow.authenticated("userPools")]),
 
   Transaction: a.model({
     listingId: a.id().required(),
@@ -81,7 +82,7 @@ const schema = a.schema({
     buyer: a.belongsTo("User", "buyerId"),
     seller: a.belongsTo("User", "sellerId")
   }).secondaryIndexes((index) => [index("buyerId"), index("sellerId"), index("listingId")])
-  .authorization((allow) => [allow.authenticated()]),
+  .authorization((allow) => [allow.authenticated("userPools")]),
 
   Conversation: a.model({
     listingId: a.id().required(),
@@ -93,7 +94,7 @@ const schema = a.schema({
     seller: a.belongsTo("User", "sellerId"),
     enquirer: a.belongsTo("User", "enquirerId")
   }).secondaryIndexes((index) => [index("listingId")])
-  .authorization((allow) => [allow.authenticated()]),
+  .authorization((allow) => [allow.authenticated("userPools")]),
 
   Message: a.model({
     conversationId: a.id().required(),
@@ -106,7 +107,7 @@ const schema = a.schema({
     sender: a.belongsTo("User", "senderId"),
     recipient: a.belongsTo("User", "recipientId")
   }).secondaryIndexes((index) => [index("conversationId")])
-  .authorization((allow) => [allow.authenticated()])
+  .authorization((allow) => [allow.authenticated("userPools")])
 });
 
 

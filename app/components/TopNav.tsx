@@ -10,9 +10,10 @@ import {ThemeSwitcher} from "./Theme/ThemeSwitcher";
 interface IProps {
   user: User | null;
   showAuthButton?: boolean;
+  showNewListingButton?: boolean;
 }
 
-export default function TopNav({user, showAuthButton=true}: IProps) {
+export default function TopNav({user, showAuthButton=true, showNewListingButton=true}: IProps) {
 
   const UserProfile = useCallback(() => {
     if(showAuthButton) {
@@ -36,7 +37,7 @@ export default function TopNav({user, showAuthButton=true}: IProps) {
       </div>
       <div className="flex gap-2">
         <ThemeSwitcher />
-        {user?.userId && <CreateListingButton /> }
+        {(user?.userId && showNewListingButton) && <CreateListingButton /> }
         <UserProfile />
       </div>
     </Navbar>
