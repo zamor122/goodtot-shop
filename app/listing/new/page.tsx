@@ -23,7 +23,6 @@ interface ListingFormInputs {
   zipcode: string;
   category: string;
   files: string[];
-  status: Schema["Listing"]["createType"]["status"];
 }
 
 const categories = [
@@ -77,7 +76,8 @@ export default function Page() {
     if (user?.userId && isValid && files.length > 0) {
       const zipcode = parseInt(data.zipcode)
       try {
-        const listingData = {
+
+        const {errors, data: newListing} = await client.models.Listing.create({
           title: data.title,
           price: data.price,
           description: data.description,
@@ -85,13 +85,10 @@ export default function Page() {
           zipCode: zipcode,
           category: data.category,
           isFeatured: false,
-          status: "Active",
           images: files,
-        };
+          status: 'Active', //Status has to be passed into create, cannot be created in separate type without declaring another type, doesn't work
+        })
 
-        console.log("Listing Data: ", listingData)
-
-        const {errors, data: newListing} = await client.models.Listing.create(listingData)
         if(errors && errors.length > 0) {
           setFormError(`Error occurred while creating your listing: ${errors[0].message}`);
         } else {
