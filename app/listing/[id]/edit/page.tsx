@@ -12,7 +12,7 @@ import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import "react-image-gallery/styles/css/image-gallery.css";
-import {type Schema} from '../../../amplify/data/resource';
+import {type Schema} from '../../../../amplify/data/resource';
 
 const client = generateClient<Schema>();
 
