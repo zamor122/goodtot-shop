@@ -35,19 +35,19 @@ const schema = a.schema({
     conversationsAsEnquirer: a.hasMany("Conversation", "enquirerId"),
     messagesSent: a.hasMany("Message", "senderId"),
     messagesReceived: a.hasMany("Message", "recipientId")
-  }).authorization((allow) => [allow.guest().to(["read"]),allow.authenticated("userPools")]),
+  }).authorization((allow) => [allow.guest(),allow.authenticated("identityPool")]),
 
   Category: a.model({
     categoryId: a.id().required(),
     name: a.string().required(),
     subcategories: a.hasMany("Subcategory", "categoryId")
-  }).authorization((allow) => [allow.guest(), allow.authenticated("userPools")]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated("identityPool")]),
 
   Subcategory: a.model({
     name: a.string().required(), 
     categoryId: a.id().required(),
     category: a.belongsTo("Category", "categoryId") 
-  }).authorization((allow) => [allow.guest(), allow.authenticated("userPools")]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated("identityPool")]),
 
   Listing: a.model({
     title: a.string().required(),
@@ -67,7 +67,7 @@ const schema = a.schema({
     user: a.belongsTo("User", "userId"),
     transaction: a.hasOne("Transaction", "listingId"),
     conversations: a.hasMany("Conversation", "listingId")
-  }).authorization((allow) => [allow.guest().to(["read"]), allow.authenticated("userPools")]),
+  }).authorization((allow) => [allow.guest(), allow.authenticated("identityPool")]),
 
   Transaction: a.model({
     listingId: a.id().required(),
@@ -82,7 +82,7 @@ const schema = a.schema({
     buyer: a.belongsTo("User", "buyerId"),
     seller: a.belongsTo("User", "sellerId")
   }).secondaryIndexes((index) => [index("buyerId"), index("sellerId"), index("listingId")])
-  .authorization((allow) => [allow.authenticated("userPools")]),
+  .authorization((allow) => [allow.authenticated("identityPool")]),
 
   Conversation: a.model({
     listingId: a.id().required(),
@@ -94,7 +94,7 @@ const schema = a.schema({
     seller: a.belongsTo("User", "sellerId"),
     enquirer: a.belongsTo("User", "enquirerId")
   }).secondaryIndexes((index) => [index("listingId")])
-  .authorization((allow) => [allow.authenticated("userPools")]),
+  .authorization((allow) => [allow.authenticated("identityPool")]),
 
   Message: a.model({
     conversationId: a.id().required(),
@@ -107,7 +107,7 @@ const schema = a.schema({
     sender: a.belongsTo("User", "senderId"),
     recipient: a.belongsTo("User", "recipientId")
   }).secondaryIndexes((index) => [index("conversationId")])
-  .authorization((allow) => [allow.authenticated("userPools")])
+  .authorization((allow) => [allow.authenticated("identityPool")])
 });
 
 
@@ -117,7 +117,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'userPool',
+    defaultAuthorizationMode: 'identityPool',
   },
 });
 
