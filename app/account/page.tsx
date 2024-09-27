@@ -45,7 +45,7 @@ export default function Page() {
   return (
     <>
     <TopNav user={user} />
-    <div className="flex flex-col justify-center items-center bg-background">
+    <div className="flex flex-col justify-center items-center">
       <span className="text-black dark:text-amber-50">Hi, your account</span>
       <Button onClick={onSignOut}>Sign out</Button>
       <section className="py-12 md:py-16 lg:py-20">

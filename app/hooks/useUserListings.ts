@@ -34,6 +34,7 @@ export default function useUserListings(userId: string | undefined): UseUserList
           if (response.errors) {
             setError(response.errors[0].message);
           } else if (response.data) {
+            setError(null);
             setListings(response.data);
           }
         } else {

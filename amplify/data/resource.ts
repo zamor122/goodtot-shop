@@ -55,6 +55,7 @@ const schema = a.schema({
     category: a.string().required(),
     price: a.float().required(),
     zipCode: a.integer().required(),
+    locationDisplayName: a.string(),
     latitude: a.float(),
     longitude: a.float(),
     meetupRadius: a.float(),

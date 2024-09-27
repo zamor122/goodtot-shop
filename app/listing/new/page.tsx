@@ -2,7 +2,7 @@
 
 import {User} from '@/app/auth/components/AuthButton';
 import TopNav from '@/app/components/TopNav';
-import ZipCodeService from '@/app/services/geocode';
+import ZipCodeService, {GeocodeResponse} from '@/app/services/geocode';
 import {FileUploader} from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
 import {Button, Card, CardHeader, Input, Select, SelectItem, Textarea} from '@nextui-org/react';
@@ -42,7 +42,7 @@ export default function Page() {
   const [user, setUser] = useState<User | null>(null);
   const [files, setFiles] = useState<string[]>([]);
   const [pageLoading, setPageLoading] = useState<boolean>(false);
-  const [zipcodeResponse, setZipcodeResponse] = useState<string | null>(null);
+  const [zipcodeResponse, setZipcodeResponse] = useState<GeocodeResponse | null>(null);
   const [zipcodeLoading, setZipcodeLoading] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
@@ -74,7 +74,11 @@ export default function Page() {
   const onSubmit = async (data: ListingFormInputs) => {
     setPageLoading(true);
     if (user?.userId && isValid && files.length > 0) {
+      console.log("Zipcode response: ", zipcodeResponse)
       const zipcode = parseInt(data.zipcode)
+      const latitudeVal = parseInt(zipcodeResponse?.lat ?? "0")
+      const longitudeVal = parseInt(zipcodeResponse?.lon ?? "0")
+      const geocodeDisplay = zipcodeResponse?.display_name
       try {
 
         const {errors, data: newListing} = await client.models.Listing.create({
@@ -83,6 +87,9 @@ export default function Page() {
           description: data.description,
           userId: user.userId,
           zipCode: zipcode,
+          latitude: latitudeVal,
+          longitude: longitudeVal,
+          locationDisplayName: geocodeDisplay,
           category: data.category,
           isFeatured: false,
           images: files,
@@ -109,8 +116,8 @@ export default function Page() {
       if (watchZipcode.length === 5) {
         let zipcodeResult = ZipCodeService.fetchGeocodeFromZip(watchZipcode);
         zipcodeResult.then((result) => {
-          if (result?.display_name) {
-            setZipcodeResponse(result.display_name);
+          if (result) {
+            setZipcodeResponse(result);
           } else {
             setZipcodeResponse(null);
           }
@@ -228,7 +235,7 @@ export default function Page() {
                   })}
                   className={`mt-1 block w-full ${errors.zipcode ? "border-red-500" : ""}`}
                 />
-                {(!errors.zipcode && zipcodeResponse && !zipcodeLoading) && <p className="text-slate-500 text-sm flex-wrap">{zipcodeResponse}</p>}
+                {(!errors.zipcode && zipcodeResponse && !zipcodeLoading) && <p className="text-slate-500 text-sm flex-wrap">{zipcodeResponse.display_name}</p>}
                 {errors.zipcode && <p className="text-red-500 text-sm">{errors.zipcode.message}</p>}
               </div>
 

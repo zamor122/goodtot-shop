@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.13",
-    "@aws-amplify/ui-react-storage": "^3.3.3",
+    "@aws-amplify/ui-react-storage": "^3.3.4",
     "@nextui-org/react": "^2.4.8",
     "aws-amplify": "^6.6.2",
     "axios": "^1.7.7",

@@ -3,12 +3,13 @@
 import {UseUserListingsResult} from "@/app/hooks/useUserListings";
 import {useCallback} from "react";
 import ListingCard from "./ListingCard";
+import {Spinner} from "@nextui-org/react";
 
 export default function ListingGrid({listings=null, loading=false, error=null}: UseUserListingsResult) {
 
   const renderListings = useCallback(() => {
     if (loading) {
-      return <p>Loading listings...</p>; // Show loading state
+      return <Spinner color="success" size="lg" /> // Show loading state
     }
 
     if (error) {
