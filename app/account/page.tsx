@@ -8,6 +8,7 @@ import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
 import ListingGrid from "../listing/components/ListingGrid";
 import useUserListings from "../hooks/useUserListings";
+import UserCard from "./components/UserCard";
 
 export default function Page() {
   const router = useRouter();
@@ -45,8 +46,10 @@ export default function Page() {
   return (
     <>
     <TopNav user={user} />
-    <div className="flex flex-col justify-center items-center">
-      <span className="text-black dark:text-amber-50">Hi, your account</span>
+    <div className="flex flex-col justify-center items-start w-full">
+      <div className="container w-1/2">
+        <UserCard />
+      </div>
       <Button onClick={onSignOut}>Sign out</Button>
       <section className="py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4">
