@@ -33,7 +33,7 @@ export default function Page() {
       fetchUser();
   }, []);
 
-  const {loading, error, listings} = useListings();
+  const {listings, loading, error} = useListings();
   
 
   return (
@@ -98,11 +98,7 @@ export default function Page() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
-            <ListingGrid 
-              listings={listings} 
-              error={error} 
-              loading={loading} 
-            /> 
+            <ListingGrid listings={listings} loading={loading} error={error} /> 
           </div>
         </section>
         <section className="py-12 md:py-16 lg:py-20 bg-muted">

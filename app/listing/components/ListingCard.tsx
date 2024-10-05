@@ -3,7 +3,7 @@ import {type Schema} from '../../../amplify/data/resource';
 import {Card, CardBody, image, Image, Link, Skeleton} from "@nextui-org/react";
 import {StorageImage} from "@aws-amplify/ui-react-storage";
 
-type ListingType = Schema["Listing"]["createType"]
+type ListingType = Schema["Listing"]["type"]
 interface IListingCardProps {
   loading: boolean;
   listing: ListingType
@@ -11,23 +11,23 @@ interface IListingCardProps {
 
 export default function ListingCard({loading, listing}: IListingCardProps) {
   if(listing) {
-    const {title, description, price, images} = listing;
+    const {id, title, description, price, images} = listing;
     const thumbnailImage = images && images[0]
     console.log(thumbnailImage)
     return (
-<Skeleton isLoaded={!loading}>
+<Skeleton isLoaded={!loading} key={id}>
   <Card>
     <Skeleton isLoaded={!loading}>
       <div className="relative w-full h-64"> {/* Fixed height for the image */}
         <StorageImage
-          path={thumbnailImage ?? "/placeholder.svg"}
+          path={ thumbnailImage ?? "/placeholder.svg"}
           alt={title}
           className="rounded-t-md w-full h-full" // Ensure image takes full width and height of container
-          style={{ objectFit: "cover" }} // Ensure the image covers the fixed container without distortion
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Responsive sizes
-          srcSet={`${thumbnailImage ?? "/placeholder.svg"} 400w,
+          style={{ objectFit: "contain" }} // Ensure the image covers the fixed container without distortion
+          sizes="(max-width: 640px) 200vw, (max-width: 768px) 50vw, 33vw" // Responsive sizes
+    /*       srcSet={`${thumbnailImage ?? "/placeholder.svg"} 400w,
                   ${thumbnailImage ?? "/placeholder.svg"} 800w,
-                  ${thumbnailImage ?? "/placeholder.svg"} 1200w`} // Image resolutions for different screens
+                  ${thumbnailImage ?? "/placeholder.svg"} 1200w`}  */// Image resolutions for different screens
         />
       </div>
     </Skeleton>

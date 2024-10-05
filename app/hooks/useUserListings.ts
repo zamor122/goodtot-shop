@@ -4,7 +4,7 @@ import {type Schema} from '../../amplify/data/resource';
 
 const client = generateClient<Schema>();
 
-type ListingType = Schema["Listing"]["createType"]
+type ListingType = Schema["Listing"]["type"];
 
 export interface UseUserListingsResult {
   listings: ListingType[] | null;

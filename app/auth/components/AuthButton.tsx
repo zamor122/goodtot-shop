@@ -47,7 +47,7 @@ export default function AuthButton({ user }: IProps) {
       return (
         <Dropdown>
           <DropdownTrigger>
-            <Avatar />
+            <Avatar radius="sm" color="default" />
           </DropdownTrigger>
           <DropdownMenu aria-label="User Menu">
             <DropdownItem key="home">

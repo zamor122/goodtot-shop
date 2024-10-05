@@ -11,7 +11,7 @@ const CreateListingButton: FC = () => {
 
   return (
     <div className="hidden lg:flex">
-    <Button onClick={navigateToNewListing}>
+    <Button className="bg-white dark:bg-stone-700 text-stone-700 dark:text-white" onClick={navigateToNewListing}>
       Create a new listing
     </Button>
     </div>

@@ -35,7 +35,7 @@ export default function TopNav({user, showAuthButton=true, showNewListingButton=
       <div className="relative flex-1 max-w-md">
         <Input type="search" placeholder="Search..." className="w-full rounded-lg" />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <ThemeSwitcher />
         {(user?.userId && showNewListingButton) && <CreateListingButton /> }
         <UserProfile />

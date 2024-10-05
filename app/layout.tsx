@@ -6,9 +6,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en">
-      <body>
+      <body className='text-foreground dark:bg-stone-700 bg-amber-50 h-full w-full'>
         <Providers>
-          <main className="text-foreground dark:bg-stone-700 bg-amber-50 h-screen w-screen">
+          <main>
             {children}
           </main>
         </Providers>

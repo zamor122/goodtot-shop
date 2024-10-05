@@ -134,7 +134,7 @@ export default function Page() {
   return (
     <>
       <TopNav user={user} showNewListingButton={false} />
-      <div className="flex justify-center items-center h-screen w-full">
+      <div className="flex justify-center items-center w-full mt-12">
         <Card className="lg:w-3/5 transition-colors sm:w-11/12 divide-y pb-12 px-12">
           <CardHeader className="md:ml-8 ml-6 mt-8">
             <span className="text-3xl">New listing</span>
