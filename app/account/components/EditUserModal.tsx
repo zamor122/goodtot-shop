@@ -6,13 +6,19 @@ import { ReactNode, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import "@aws-amplify/ui-react/styles.css";
 import UserImage from "./UserImage";
+import {User} from "@/app/auth/components/AuthButton";
+import {type Schema} from '../../../amplify/data/resource';
+import {generateClient} from 'aws-amplify/data';
+
+type UserType = Schema["User"]["type"];
 
 interface IEditUserModal {
+  user: UserType | null;
   onOpen: () => void;
   isOpen: boolean;
   onOpenChange: () => void;
   onClose: () => void;
-  currentImage: string | null;
+  currentImage: string | null | undefined;
 }
 
 interface EditProfileInputs {
@@ -29,6 +35,7 @@ export default function EditUserModal({
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const { handleSubmit, formState: { isSubmitted } } = useForm<EditProfileInputs>();
   const [imageKey, setImageKey] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
 
   const onSubmit = () => {
 
@@ -52,7 +59,7 @@ export default function EditUserModal({
                   <span className="border-b-2 w-full flex mb-4 border-emerald-400">Profile picture</span>
                   <div className="sm:justify-between flex sm:flex-row flex-col gap-6 items-center">
                     <div className="w-1/2 flex justify-center items-center">
-                      <UserImage path={profileImage} alt="Proile Image" loading={false} editable={true} />
+                      <UserImage path={profileImage} alt="Proile Image" loading={imageLoading} editable={true} />
                     </div>
                     <div className="w-3/4">
                       <FileUploader
@@ -61,14 +68,22 @@ export default function EditUserModal({
                         maxFileCount={1}
                         autoUpload={false}
                         isResumable={false}
+                        onUploadStart={() => (
+                            setImageLoading(true)
+                        )}
                         onUploadSuccess={({ key }) => {
                           if (key) {
                             setProfileImage(key);
+                            setImageLoading(false)
                           }
+                        }}
+                        onUploadError={() => {
+                          setImageLoading(false);
                         }}
                         onFileRemove={({ key }) => {
                           if (key) {
-                            setProfileImage(currentImage); // Reset to initial image
+                            setProfileImage(currentImage ?? null); // Reset to initial image
+                            setImageLoading(false);
                           }
                         }}
                       />

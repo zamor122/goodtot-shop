@@ -22,6 +22,7 @@ type UserType = Schema["User"]["type"];
 export default function Page() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [detailsLoading, setDetailsLoading] = useState<boolean>(true);
   const [detailsError, setDetailsError] = useState<string | null>(null);
@@ -46,6 +47,7 @@ export default function Page() {
             const user = await getCurrentUser();
             setUser(user);
         } catch (e) {
+            router.push("/")
             setUser(null);
         } finally {
             setUser(prevState => ({ ...prevState, loading: false }));
@@ -53,7 +55,7 @@ export default function Page() {
       };
 
       fetchUser();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     async function fetchUserDetails() {
@@ -66,7 +68,7 @@ export default function Page() {
           }
           if(userResponse.data) {
             setDetailsError(null)
-            setProfileImage(userResponse.data.picture)
+            setUserData(userResponse.data)
           }
 
         } catch (error: any) {
@@ -99,9 +101,9 @@ export default function Page() {
             <Button endContent={<EditIcon className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onOpen}>
               Edit Profile
             </Button>
-            <EditUserModal currentImage={""} onClose={onClose} onOpen={onOpen} onOpenChange={onOpenChange} isOpen={isOpen} />
+            <EditUserModal user={userData} currentImage={userData?.picture} onClose={onClose} onOpen={onOpen} onOpenChange={onOpenChange} isOpen={isOpen} />
           </div>
-          <UserCard mode="Owner" user={user} />
+          <UserCard mode="Owner" user={user} detailsLoading={detailsLoading} />
           <div className="py-12 md:py-16 lg:py-20">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold mb-6 text-center">Listings</h2>
