@@ -37,8 +37,25 @@ const client = generateClient<Schema>({
   authMode: "iam",
 });
 
+const generateRandomUsername = (): string => {
+  const adjectives = [
+    "Bright", "Silent", "Swift", "Brave", "Clever", "Mighty", "Bold", "Wise", "Eager", "Quick", "Strong"
+  ];
+  const nouns = [
+    "Falcon", "Lion", "Tiger", "Wolf", "Bear", "Eagle", "Shark", "Panther", "Hawk", "Dragon", "Leopard"
+  ];
+  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  const randomNumbers = Math.floor(1000 + Math.random() * 9000); // Generates a random 4-digit number
+  return `${randomAdjective}${randomNoun}${randomNumbers}`;
+};
+
+
+
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   console.log("Event Data: ", event)
+  const username = event.request.userAttributes.email || generateRandomUsername(); // Use email or auto-generate a username
+
   await client.graphql({
     query: createUser,
     variables: {
@@ -46,7 +63,8 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
         id: event.request.userAttributes.sub,
         email: event.request.userAttributes.email,
         userId: event.request.userAttributes.sub,
-        username: event.request.userAttributes.email
+        username: username,
+        emailVerified: true,
       },
     },
   });

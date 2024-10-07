@@ -10,6 +10,7 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   User: a.model({
     userId: a.id().required(),
+    about: a.string(),
     name: a.string(),
     email: a.email().required(),
     username: a.string(),
@@ -18,8 +19,9 @@ const schema = a.schema({
     longitude: a.float(),
     meetupRadius: a.float(),
     phone: a.phone(),
-    picture: a.url(),
+    picture: a.string(),
     rating: a.float(),
+    isVerified: a.boolean().default(false),
     status: a.enum(["Active", "Flagged", "Suspended", "Banned"]),
     lastLogin: a.datetime(),
     emailVerified: a.boolean().default(false),

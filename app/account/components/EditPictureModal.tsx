@@ -1,48 +1,85 @@
 "use client";
 
-import { FileUploader, StorageImage } from "@aws-amplify/ui-react-storage";
-import { Avatar, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
-import { ReactNode, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import {FileUploader} from "@aws-amplify/ui-react-storage";
 import "@aws-amplify/ui-react/styles.css";
-import UserImage from "./UserImage";
-import {User} from "@/app/auth/components/AuthButton";
+import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
+import {ReactNode, useState} from "react";
+import {useForm} from "react-hook-form";
 import {type Schema} from '../../../amplify/data/resource';
+import UserImage from "./UserImage";
 import {generateClient} from 'aws-amplify/data';
+
+const client = generateClient<Schema>();
 
 type UserType = Schema["User"]["type"];
 
-interface IEditUserModal {
-  user: UserType | null;
+interface IEditPictureModal {
   onOpen: () => void;
-  isOpen: boolean;
   onOpenChange: () => void;
+  isOpen: boolean;
   onClose: () => void;
   currentImage: string | null | undefined;
+  userId: string | undefined;
 }
 
-interface EditProfileInputs {
-  files?: string[];
-}
-
-export default function EditUserModal({
+export default function EditPictureModal({
   onOpen,
-  isOpen,
   onOpenChange,
+  isOpen,
   onClose,
   currentImage,
-}: IEditUserModal): ReactNode {
+  userId,
+}: IEditPictureModal): ReactNode {
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const { handleSubmit, formState: { isSubmitted } } = useForm<EditProfileInputs>();
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [imageKey, setImageKey] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
 
-  const onSubmit = () => {
 
+  const onSubmit = async () => {
+    if(userId) {
+      if(profileImage != currentImage) {
+        console.log("Profile image:" , profileImage)
+        try{
+          const response = await client.models.User.update({id: userId, picture: profileImage});
+          if(response.errors && response.errors.length > 0) {
+            setUploadError(response.errors[0].message);
+          } else {
+            onClose();
+          }
+        } catch (error: any) {
+          //TODO: throw an error here
+          console.log("Error: ", error);
+        } finally {
+          //set some loading component here, don't close the modal thought
+        }
+      } else {
+        setUploadError("Try renaming or uploading a different picture")
+      }
+    }
+  };
+
+  const onDelete = async () => {
+    if(userId) {
+        try{
+          const response = await client.models.User.update({id: userId, picture: null});
+          if(response.errors && response.errors.length > 0) {
+            setUploadError(response.errors[0].message);
+          } else {
+            onClose();
+          }
+        } catch (error: any) {
+          //TODO: throw an error here
+          console.log("Error: ", error);
+        } finally {
+          //set some loading component here, don't close the modal thought
+        }
+    }
   };
 
   return (
     <Modal
+
       backdrop="opaque"
       isOpen={isOpen}
       onOpenChange={onOpenChange}
@@ -53,13 +90,13 @@ export default function EditUserModal({
         <>
           <ModalHeader className="flex flex-col gap-1">Edit your profile</ModalHeader>
           <ModalBody>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-11/12 mx-auto p-4 transition-colors">
+            <form onSubmit={onSubmit} className="w-11/12 mx-auto p-4 transition-colors">
               <div className="md:grid md:grid-rows-1 md:grid-flow-col gap-4 mb-4">
                 <div className="w-full">
                   <span className="border-b-2 w-full flex mb-4 border-emerald-400">Profile picture</span>
                   <div className="sm:justify-between flex sm:flex-row flex-col gap-6 items-center">
                     <div className="w-1/2 flex justify-center items-center">
-                      <UserImage path={profileImage} alt="Proile Image" loading={imageLoading} editable={true} />
+                      <UserImage path={profileImage} alt="Proile Image" loading={imageLoading} isProfile={true} />
                     </div>
                     <div className="w-3/4">
                       <FileUploader
@@ -87,9 +124,7 @@ export default function EditUserModal({
                           }
                         }}
                       />
-                      {isSubmitted && !profileImage && (
-                        <p className="text-red-500 text-sm">At least one file must be uploaded</p>
-                      )}
+                      {uploadError && <p className="text-red-500 text-sm">At least one file must be uploaded</p>}
                     </div>
                   </div>
                 </div>

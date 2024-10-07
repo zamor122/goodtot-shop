@@ -3,17 +3,17 @@
 import '@aws-amplify/ui-react/styles.css';
 import {Button, useDisclosure} from "@nextui-org/react";
 import {getCurrentUser, signOut} from "aws-amplify/auth";
-import {EditIcon, LogOut} from "lucide-react";
+import {generateClient} from 'aws-amplify/data';
+import {LogOut} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {useCallback, useEffect, useState} from "react";
+import {type Schema} from '../../amplify/data/resource';
 import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
 import useUserListings from "../hooks/useUserListings";
 import ListingGrid from "../listing/components/ListingGrid";
-import EditUserModal from "./components/EditUserModal";
+import EditPictureModal from "./components/EditPictureModal";
 import UserCard from "./components/UserCard";
-import {type Schema} from '../../amplify/data/resource';
-import {generateClient} from 'aws-amplify/data';
 
 const client = generateClient<Schema>();
 type UserType = Schema["User"]["type"];
@@ -98,12 +98,8 @@ export default function Page() {
             <Button endContent={<LogOut className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onSignOut}>
               Sign out
             </Button>
-            <Button endContent={<EditIcon className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onOpen}>
-              Edit Profile
-            </Button>
-            <EditUserModal user={userData} currentImage={userData?.picture} onClose={onClose} onOpen={onOpen} onOpenChange={onOpenChange} isOpen={isOpen} />
           </div>
-          <UserCard mode="Owner" user={user} detailsLoading={detailsLoading} />
+          <UserCard onPressEditPicture={onOpen} onPressDeletePicture={() => console.log("Delete")} mode="Owner" userDetails={userData} detailsLoading={detailsLoading} />
           <div className="py-12 md:py-16 lg:py-20">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold mb-6 text-center">Listings</h2>
@@ -112,6 +108,7 @@ export default function Page() {
           </div>
         </div>
       </div>
+      <EditPictureModal userId={user?.userId} currentImage={userData?.picture} onClose={onClose} onOpen={onOpen} onOpenChange={onOpenChange} isOpen={isOpen} />
     </>
   );
 }

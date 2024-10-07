@@ -44,19 +44,15 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 
       {/* Navigation buttons */}
       <Button
-        auto
-        light
         size="sm"
-        icon={<ChevronLeft className="w-6 h-6" />}
+        startContent={<ChevronLeft className="w-6 h-6" />}
         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 p-1"
         onClick={prevImage}
         aria-label="Previous image"
       />
       <Button
-        auto
-        light
         size="sm"
-        icon={<ChevronRight className="w-6 h-6" />}
+        endContent={<ChevronRight className="w-6 h-6" />}
         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 p-1"
         onClick={nextImage}
         aria-label="Next image"
