@@ -17,17 +17,18 @@ import UserCard from "./components/UserCard";
 
 const client = generateClient<Schema>();
 type UserType = Schema["User"]["type"];
+type UserUpdateType = Schema["User"]["updateType"];
 
 
 export default function Page() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserType | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [userData, setUserData] = useState<UserType | UserUpdateType | null>(null);
   const [detailsLoading, setDetailsLoading] = useState<boolean>(true);
   const [detailsError, setDetailsError] = useState<string | null>(null);
   const {onOpen, isOpen, onOpenChange, onClose} = useDisclosure();
-  const [details, setDetails] = useState<UserType | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [newProfileImage, setNewProfileImage] = useState<string | null>(null);
 
   const onSignOut = useCallback(async () => {
     try {
@@ -85,6 +86,64 @@ export default function Page() {
   //TODO: Move call to get user's listings here
   const {listings, error, loading} = useUserListings(user?.userId);
 
+
+  const onDeleteUserImage = async () => {
+    setDetailsLoading(true);
+  
+    if (user?.userId) {
+      const { userId } = user;
+  
+      try {
+        const response = await client.models.User.update({ id: userId, picture: null });
+  
+        if (response.errors && response.errors.length > 0) {
+          setDetailsLoading(false);
+          return;
+        }
+  
+        if (response.data ) {
+          setUserData(response.data);
+          onClose();
+        }
+  
+        onClose();
+      } catch (error: any) {
+        setUploadError(`Error deleting user image: ${error}`);
+      } finally {
+        setDetailsLoading(false);
+      }
+    }
+  };
+
+  const onSubmitUserImage = async () => {
+    setDetailsLoading(true)
+    if(user?.userId) {
+      const {userId} = user;
+      try {
+        const response = await client.models.User.update({id: userId, picture: newProfileImage});
+        if(response.errors && response.errors.length > 0) {
+          setUploadError(response.errors[0].message);
+          setDetailsLoading(false);
+        } else {
+
+          if (response.data ) {
+            setUserData(response.data);
+            setNewProfileImage(response.data.picture);
+            onClose();
+          }
+
+        }
+      } catch (error: any) {
+        setUploadError(`There was an error uploading the file: ${error}`)        
+        setDetailsLoading(false)
+      } finally {
+        setDetailsLoading(false);
+      }
+    }
+  };
+  
+
+
   return (
     <>
     <TopNav user={user} />
@@ -95,20 +154,45 @@ export default function Page() {
              <Button endContent={<UserRoundPlus className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onSignOut}>
               Follow
             </Button> */}
-            <Button endContent={<LogOut className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onSignOut}>
+            <Button 
+              endContent={<LogOut className="amber-50 dark:stone-700" />} 
+              className="bg-emerald-400 text-amber-50 dark:text-stone-700" 
+              onClick={onSignOut}>
               Sign out
             </Button>
           </div>
-          <UserCard onPressEditPicture={onOpen} onPressDeletePicture={() => console.log("Delete")} mode="Owner" userDetails={userData} detailsLoading={detailsLoading} />
+          <UserCard 
+            onPressEditPicture={onOpen} 
+            onPressDeletePicture={onDeleteUserImage} 
+            mode="Owner" 
+            userDetails={userData} 
+            detailsLoading={detailsLoading} 
+          />
           <div className="py-12 md:py-16 lg:py-20">
             <div className="container mx-auto px-4">
               <h2 className="text-2xl font-bold mb-6 text-center">Listings</h2>
-              <ListingGrid listings={listings} error={error} loading={loading} />
+              <ListingGrid 
+                listings={listings} 
+                error={error} 
+                loading={loading} 
+              />
             </div>
           </div>
         </div>
       </div>
-      <EditPictureModal userId={user?.userId} currentImage={userData?.picture} onClose={onClose} onOpen={onOpen} onOpenChange={onOpenChange} isOpen={isOpen} />
+      <EditPictureModal 
+        onSubmit={onSubmitUserImage}
+        loading={detailsLoading} 
+        setLoading={setDetailsLoading} 
+        newProfileImage={newProfileImage} 
+        setNewProfileImage={setNewProfileImage} 
+        userId={user?.userId} 
+        currentImage={userData?.picture} 
+        onClose={onClose} 
+        onOpen={onOpen} 
+        onOpenChange={onOpenChange} 
+        isOpen={isOpen} 
+      />
     </>
   );
 }

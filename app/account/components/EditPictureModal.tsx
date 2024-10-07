@@ -3,13 +3,9 @@
 import {FileUploader} from "@aws-amplify/ui-react-storage";
 import "@aws-amplify/ui-react/styles.css";
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
-import {ReactNode, useState} from "react";
-import {useForm} from "react-hook-form";
+import {Dispatch, ReactNode, SetStateAction, useState} from "react";
 import {type Schema} from '../../../amplify/data/resource';
 import UserImage from "./UserImage";
-import {generateClient} from 'aws-amplify/data';
-
-const client = generateClient<Schema>();
 
 type UserType = Schema["User"]["type"];
 
@@ -20,6 +16,11 @@ interface IEditPictureModal {
   onClose: () => void;
   currentImage: string | null | undefined;
   userId: string | undefined;
+  onSubmit: () => void,
+  newProfileImage: string | null;
+  setNewProfileImage: Dispatch<SetStateAction<string | null>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function EditPictureModal({
@@ -29,53 +30,13 @@ export default function EditPictureModal({
   onClose,
   currentImage,
   userId,
+  newProfileImage, 
+  setNewProfileImage,
+  onSubmit,
+  loading,
+  setLoading,
 }: IEditPictureModal): ReactNode {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [imageKey, setImageKey] = useState<string | null>(null);
-  const [imageLoading, setImageLoading] = useState<boolean>(false);
-
-
-  const onSubmit = async () => {
-    if(userId) {
-      if(profileImage != currentImage) {
-        console.log("Profile image:" , profileImage)
-        try{
-          const response = await client.models.User.update({id: userId, picture: profileImage});
-          if(response.errors && response.errors.length > 0) {
-            setUploadError(response.errors[0].message);
-          } else {
-            onClose();
-          }
-        } catch (error: any) {
-          //TODO: throw an error here
-          console.log("Error: ", error);
-        } finally {
-          //set some loading component here, don't close the modal thought
-        }
-      } else {
-        setUploadError("Try renaming or uploading a different picture")
-      }
-    }
-  };
-
-  const onDelete = async () => {
-    if(userId) {
-        try{
-          const response = await client.models.User.update({id: userId, picture: null});
-          if(response.errors && response.errors.length > 0) {
-            setUploadError(response.errors[0].message);
-          } else {
-            onClose();
-          }
-        } catch (error: any) {
-          //TODO: throw an error here
-          console.log("Error: ", error);
-        } finally {
-          //set some loading component here, don't close the modal thought
-        }
-    }
-  };
 
   return (
     <Modal
@@ -96,7 +57,7 @@ export default function EditPictureModal({
                   <span className="border-b-2 w-full flex mb-4 border-emerald-400">Profile picture</span>
                   <div className="sm:justify-between flex sm:flex-row flex-col gap-6 items-center">
                     <div className="w-1/2 flex justify-center items-center">
-                      <UserImage path={profileImage} alt="Proile Image" loading={imageLoading} isProfile={true} />
+                      <UserImage path={newProfileImage} onPressEditImage={onSubmit} alt="Proile Image" loading={loading } editable={false} />
                     </div>
                     <div className="w-3/4">
                       <FileUploader
@@ -106,21 +67,21 @@ export default function EditPictureModal({
                         autoUpload={false}
                         isResumable={false}
                         onUploadStart={() => (
-                            setImageLoading(true)
+                            setLoading(true)
                         )}
                         onUploadSuccess={({ key }) => {
                           if (key) {
-                            setProfileImage(key);
-                            setImageLoading(false)
+                            setNewProfileImage(key);
+                            setLoading(false)
                           }
                         }}
                         onUploadError={() => {
-                          setImageLoading(false);
+                          setLoading(false);
                         }}
                         onFileRemove={({ key }) => {
                           if (key) {
-                            setProfileImage(currentImage ?? null); // Reset to initial image
-                            setImageLoading(false);
+                            setNewProfileImage(currentImage ?? null); // Reset to initial image
+                            setLoading(false);
                           }
                         }}
                       />
