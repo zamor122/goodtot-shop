@@ -21,6 +21,8 @@ const schema = a.schema({
     phone: a.phone(),
     picture: a.string(),
     rating: a.float(),
+    bought: a.integer().default(0),
+    sold: a.integer().default(0),
     isVerified: a.boolean().default(false),
     status: a.enum(["Active", "Flagged", "Suspended", "Banned"]),
     lastLogin: a.datetime(),

@@ -6,7 +6,7 @@ import {getCurrentUser, signOut} from "aws-amplify/auth";
 import {generateClient} from 'aws-amplify/data';
 import {LogOut} from "lucide-react";
 import {useRouter} from "next/navigation";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {type Schema} from '../../amplify/data/resource';
 import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
@@ -17,17 +17,16 @@ import UserCard from "./components/UserCard";
 
 const client = generateClient<Schema>();
 type UserType = Schema["User"]["type"];
-type UserUpdateType = Schema["User"]["updateType"];
 
 
 export default function Page() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserType | UserUpdateType | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
   const [detailsLoading, setDetailsLoading] = useState<boolean>(true);
-  const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [_detailsError, setDetailsError] = useState<string | null>(null);
   const {onOpen, isOpen, onOpenChange, onClose} = useDisclosure();
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [_uploadError, setUploadError] = useState<string | null>(null);
   const [newProfileImage, setNewProfileImage] = useState<string | null>(null);
 
   const onSignOut = useCallback(async () => {
@@ -58,7 +57,7 @@ export default function Page() {
       fetchUser();
   }, [router]);
 
-  useEffect(() => {
+  useMemo(() => {
     async function fetchUserDetails() {
       setDetailsLoading(true);
       if(user?.userId) {

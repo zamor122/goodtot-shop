@@ -1,16 +1,15 @@
 import {Schema} from "@/amplify/data/resource";
 import {formatDateToMonthYear} from "@/app/helpers/DateHelper";
-import {Card, CardBody, Skeleton} from "@nextui-org/react";
-import {CheckCircle2, ShoppingBag, Star, Tag} from "lucide-react";
+import {Card, CardBody, CardHeader, Skeleton} from "@nextui-org/react";
+import {CheckCircle2, Star} from "lucide-react";
 import {FC} from "react";
 import "react-image-gallery/styles/css/image-gallery.css";
 import UserImage from "./UserImage";
 
 type UserDetails = Schema["User"]["type"];
-type UserUpdateDetailsType = Schema["User"]["updateType"]
 interface IProps {
   mode: "Owner" | "Guest";
-  userDetails: UserDetails | UserUpdateDetailsType | null;
+  userDetails: UserDetails | null;
   detailsLoading: boolean;
   onPressEditPicture: () => void;
   onPressDeletePicture: () => void;
@@ -20,6 +19,9 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
 
   return (
     <Card className="w-full p-8" isBlurred={true}>
+      <CardHeader>
+        <span className="text-2xl text-muted-foreground">Profile</span>
+      </CardHeader>
       <CardBody>
         <div className="sm:grid sm:grid-rows-1 sm:grid-flow-col sm:gap-6 flex flex-col">
           <div className="flex sm:flex-row flex-col gap-6 items-center">
@@ -35,7 +37,7 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
             </>
           </Skeleton>
           <Skeleton isLoaded={!detailsLoading}>
-            <span className="text-lg text-muted-foreground">{userDetails?.createdAt && formatDateToMonthYear(userDetails.createdAt)}</span>
+            {userDetails && userDetails?.createdAt && <span className="text-lg text-muted-foreground">{formatDateToMonthYear(userDetails.createdAt)}</span>}
           </Skeleton>
           <Skeleton isLoaded={!detailsLoading}>
             <div className="flex items-center gap-1">
@@ -61,6 +63,11 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
             <Users className="h-6 w-6 text-muted-foreground" />
             <span className="text-xl font-medium">1.2k followers</span>
           </div> */}
+          {/* 
+          TODO: We're going to have to get down pact the buyer and seller counts,
+          these should probably be fields on the model rather than counts of arrays
+          for now, comment out
+          
           <Skeleton isLoaded={!detailsLoading}>
           <div className="flex items-center gap-2">
               <ShoppingBag className="h-6 w-6 text-muted-foreground" />
@@ -72,7 +79,7 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
               <Tag className="h-6 w-6 text-muted-foreground" />
               <span className="text-xl font-medium">{`${userDetails?.seller && (userDetails.seller.length - 1)} sold`}</span>
             </div>
-          </Skeleton>
+          </Skeleton> */}
         </div>
         </div>
       <div className="flex mt-8">
