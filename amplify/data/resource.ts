@@ -20,7 +20,7 @@ const schema = a.schema({
     meetupRadius: a.float(),
     phone: a.phone(),
     picture: a.string(),
-    rating: a.float(),
+    rating: a.float().default(0),
     bought: a.integer().default(0),
     sold: a.integer().default(0),
     isVerified: a.boolean().default(false),

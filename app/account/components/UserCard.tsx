@@ -1,8 +1,8 @@
 import {Schema} from "@/amplify/data/resource";
 import {formatDateToMonthYear} from "@/app/helpers/DateHelper";
 import {Card, CardBody, CardHeader, Skeleton} from "@nextui-org/react";
-import {CheckCircle2, Star} from "lucide-react";
-import {FC} from "react";
+import {CheckCircle2, ShoppingBag, Star, Tag} from "lucide-react";
+import {FC, useCallback, useMemo} from "react";
 import "react-image-gallery/styles/css/image-gallery.css";
 import UserImage from "./UserImage";
 
@@ -16,40 +16,78 @@ interface IProps {
 }
 
 const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDeletePicture, onPressEditPicture }) => {
+  const ratingText = (userDetails && userDetails?.rating && userDetails.rating > 0) ?  userDetails.rating : "No ratings yet"
+  const usernameText = (userDetails && userDetails.username) ? userDetails?.username : "Error"
+  const userVerified = userDetails?.isVerified
+  const aboutText = userDetails && userDetails?.about ? userDetails.about : "Write something about yourself here..."
+  const buyerText = userDetails?.bought ?? 0
+  const sellerText = userDetails?.sold ?? 0
 
+  const renderUserRating = useMemo(() => {
+    if(userDetails && userDetails.rating && userDetails?.rating > 0) {
+    return (<div className="flex">
+      {[...Array(userDetails.rating)].map((_, i) => (
+        <Star
+          key={i}
+          className={`h-4 w-4 ${i < 4 ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"}`}
+        />
+      ))}
+    </div>)
+    } else {
+      return null;
+    }
+  }, [userDetails])
+
+  const createdAtText = useMemo(() => {
+    try {
+      if(userDetails && userDetails.createdAt) { 
+        return formatDateToMonthYear(userDetails.createdAt);
+      }
+    } catch (error: any) {
+      return "Error"
+    }
+  }, [userDetails])
+  
   return (
     <Card className="w-full p-8" isBlurred={true}>
-      <CardHeader>
-        <span className="text-2xl text-muted-foreground">Profile</span>
+      <CardHeader className="flex justify-between">
+        <span className="sm:text-3xl text-xl text-muted-foreground">Profile</span>
+        <div className="flex sm:flex-row flex-col  sm:gap-12 gap-4">
+        <Skeleton isLoaded={!detailsLoading}>
+          <div className="flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4 sm:h-6 sm:w-6 text-muted-foreground" />
+              <span className="text-md font-medium">{`${buyerText} bought`}</span>
+          </div>
+          </Skeleton>
+          <Skeleton isLoaded={!detailsLoading}>
+            <div className="flex items-center gap-2">
+              <Tag className="h-4 w-4 sm:h-6 sm:w-6 text-muted-foreground" />
+              <span className="text-md font-medium">{`${sellerText} sold`}</span>
+            </div>
+          </Skeleton>
+        </div>
       </CardHeader>
-      <CardBody>
+      <CardBody className="flex sm:align-start align-center">
         <div className="sm:grid sm:grid-rows-1 sm:grid-flow-col sm:gap-6 flex flex-col">
           <div className="flex sm:flex-row flex-col gap-6 items-center">
             <UserImage onPressEditImage={onPressEditPicture} onPressDeleteImage={onPressDeletePicture} path={userDetails?.picture} alt="Profile Image" loading={detailsLoading} verified={true} editable={true} />
             <div className="flex flex-col items-center sm:items-start justify-center">
           <Skeleton isLoaded={!detailsLoading}>
-            <>
+            <div className="flex gap-4">
               {/* TODO: wrap text to multiple lines */}
               <div className="w-full text-xl sm:text-4xl overflow-hidden text-ellipsis whitespace-normal" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-              {userDetails?.username ?? ""}
+                {usernameText}
                 </div>
-                {userDetails?.isVerified && <CheckCircle2 className="h-7 w-7 text-emerald-400" />}
-            </>
+                {userVerified && <CheckCircle2 className="h-7 w-7 text-emerald-400" />}
+            </div>
           </Skeleton>
           <Skeleton isLoaded={!detailsLoading}>
-            {userDetails && userDetails?.createdAt && <span className="text-lg text-muted-foreground">{formatDateToMonthYear(userDetails.createdAt)}</span>}
+            <span className="text-lg text-muted-foreground">{createdAtText}</span>
           </Skeleton>
           <Skeleton isLoaded={!detailsLoading}>
             <div className="flex items-center gap-1">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < 4 ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"}`}
-                  />
-                ))}
-              </div>
-              <span className="text-sm font-medium">({userDetails?.rating ?? 0})</span>
+              {renderUserRating}
+              <span className="text-sm font-medium">({ratingText})</span>
             </div>
           </Skeleton>
         </div>
@@ -63,32 +101,15 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
             <Users className="h-6 w-6 text-muted-foreground" />
             <span className="text-xl font-medium">1.2k followers</span>
           </div> */}
-          {/* 
-          TODO: We're going to have to get down pact the buyer and seller counts,
-          these should probably be fields on the model rather than counts of arrays
-          for now, comment out
-          
-          <Skeleton isLoaded={!detailsLoading}>
-          <div className="flex items-center gap-2">
-              <ShoppingBag className="h-6 w-6 text-muted-foreground" />
-              <span className="text-xl font-medium">{`${userDetails?.buyer && (userDetails.buyer.length - 1)} bought`}</span>
-          </div>
-          </Skeleton>
-          <Skeleton isLoaded={!detailsLoading}>
-            <div className="flex items-center gap-2">
-              <Tag className="h-6 w-6 text-muted-foreground" />
-              <span className="text-xl font-medium">{`${userDetails?.seller && (userDetails.seller.length - 1)} sold`}</span>
-            </div>
-          </Skeleton> */}
         </div>
         </div>
       <div className="flex mt-8">
         <div>
         <Skeleton isLoaded={!detailsLoading}>
           <h3 className="font-semibold text-xl mb-2">About</h3>
-            <p className="text-lg text-muted-foreground">
-              Passionate about photography and outdoor adventures. I sell high-quality used gear and vintage finds. Always looking for unique items!
-            </p>
+            <span className="text-lg text-muted-foreground">
+              {aboutText}
+            </span>
           </Skeleton>
         </div>
       </div>

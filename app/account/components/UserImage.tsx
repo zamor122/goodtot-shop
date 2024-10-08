@@ -37,7 +37,7 @@ export default function UserImage({
           id="badge"
           showOutline={false}
           content={<CheckCircle2 className="text-emerald-400 bg-transparent dark:bg-stone-700 rounded-xl mb-7 mr-1.5" />}
-          className="bg-white dark:bg-transparent border-0"
+          className="bg-white p-1 dark:bg-transparent border-0"
           placement="bottom-right"
         >
           {imgElement}
