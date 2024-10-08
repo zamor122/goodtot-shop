@@ -187,10 +187,8 @@ export default function Page() {
         setLoading={setDetailsLoading} 
         newProfileImage={newProfileImage} 
         setNewProfileImage={setNewProfileImage} 
-        userId={user?.userId} 
         currentImage={userData?.picture ?? null} 
         onClose={onClose} 
-        onOpen={onOpen} 
         onOpenChange={onOpenChange} 
         isOpen={isOpen} 
       />

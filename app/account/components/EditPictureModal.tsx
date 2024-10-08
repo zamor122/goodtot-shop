@@ -4,18 +4,12 @@ import {FileUploader} from "@aws-amplify/ui-react-storage";
 import "@aws-amplify/ui-react/styles.css";
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
 import {Dispatch, ReactNode, SetStateAction, useState} from "react";
-import {type Schema} from '../../../amplify/data/resource';
 import UserImage from "./UserImage";
-
-type UserType = Schema["User"]["type"];
-
 interface IEditPictureModal {
-  onOpen: () => void;
   onOpenChange: () => void;
   isOpen: boolean;
   onClose: () => void;
   currentImage: string | null;
-  userId: string | undefined;
   onSubmit: () => void,
   newProfileImage: string | null;
   setNewProfileImage: Dispatch<SetStateAction<string | null>>;
@@ -24,30 +18,26 @@ interface IEditPictureModal {
 }
 
 export default function EditPictureModal({
-  onOpen,
   onOpenChange,
   isOpen,
   onClose,
   currentImage,
-  userId,
   newProfileImage, 
   setNewProfileImage,
   onSubmit,
   loading,
   setLoading,
 }: IEditPictureModal): ReactNode {
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadError, _setUploadError] = useState<string | null>(null);
   const [filesUploaded, setFilesUploaded] = useState<string[]>([]);
 
   const onCloseModal = () => {
-    console.log("close")
     setNewProfileImage(currentImage);
     setFilesUploaded([]);
     onClose();
   }
 
   const onOpenChangeModal = () => {
-    console.log("OpenChange")
     setNewProfileImage(currentImage);
     setFilesUploaded([]);
     onOpenChange();
