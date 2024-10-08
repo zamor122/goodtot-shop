@@ -6,7 +6,6 @@
  * @returns A string in the format "Month, Year" (e.g., "October, 2024")
  */
 export const formatDateToMonthYear = (isoDate: string): string => {
-  console.log("ISODate: ", isoDate)
   if (!isoDate) {
     throw new Error("Invalid date string");
   }

@@ -102,6 +102,7 @@ export default function Page() {
         }
   
         if (response.data ) {
+          setNewProfileImage(null);
           setUserData(response.data);
           onClose();
         }
@@ -187,7 +188,7 @@ export default function Page() {
         newProfileImage={newProfileImage} 
         setNewProfileImage={setNewProfileImage} 
         userId={user?.userId} 
-        currentImage={userData?.picture} 
+        currentImage={userData?.picture ?? null} 
         onClose={onClose} 
         onOpen={onOpen} 
         onOpenChange={onOpenChange} 

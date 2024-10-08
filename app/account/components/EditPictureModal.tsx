@@ -14,7 +14,7 @@ interface IEditPictureModal {
   onOpenChange: () => void;
   isOpen: boolean;
   onClose: () => void;
-  currentImage: string | null | undefined;
+  currentImage: string | null;
   userId: string | undefined;
   onSubmit: () => void,
   newProfileImage: string | null;
@@ -37,13 +37,28 @@ export default function EditPictureModal({
   setLoading,
 }: IEditPictureModal): ReactNode {
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [filesUploaded, setFilesUploaded] = useState<string[]>([]);
+
+  const onCloseModal = () => {
+    console.log("close")
+    setNewProfileImage(currentImage);
+    setFilesUploaded([]);
+    onClose();
+  }
+
+  const onOpenChangeModal = () => {
+    console.log("OpenChange")
+    setNewProfileImage(currentImage);
+    setFilesUploaded([]);
+    onOpenChange();
+  }
 
   return (
     <Modal
 
       backdrop="opaque"
       isOpen={isOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={onOpenChangeModal}
       placement="center"
       size="5xl"
     >
@@ -57,7 +72,7 @@ export default function EditPictureModal({
                   <span className="border-b-2 w-full flex mb-4 border-emerald-400">Profile picture</span>
                   <div className="sm:justify-between flex sm:flex-row flex-col gap-6 items-center">
                     <div className="w-1/2 flex justify-center items-center">
-                      <UserImage path={newProfileImage} onPressEditImage={onSubmit} alt="Proile Image" loading={loading } editable={false} />
+                      <UserImage path={newProfileImage} onPressEditImage={onSubmit} alt="Proile Image" loading={loading } editable={false} isProfile={true} />
                     </div>
                     <div className="w-3/4">
                       <FileUploader
@@ -73,6 +88,7 @@ export default function EditPictureModal({
                           if (key) {
                             setNewProfileImage(key);
                             setLoading(false)
+                            setFilesUploaded((prevFilesUploaded) => [...prevFilesUploaded, key]);
                           }
                         }}
                         onUploadError={() => {
@@ -82,6 +98,7 @@ export default function EditPictureModal({
                           if (key) {
                             setNewProfileImage(currentImage ?? null); // Reset to initial image
                             setLoading(false);
+                            setFilesUploaded((prevFilesUploaded) => prevFilesUploaded.filter((file) => file !== key));
                           }
                         }}
                       />
@@ -92,10 +109,10 @@ export default function EditPictureModal({
               </div>
             </form>
             <ModalFooter>
-              <Button color="danger" variant="flat" onPress={onClose}>
+              <Button color="danger" variant="flat" onPress={onCloseModal}>
                 Close
               </Button>
-              <Button color="primary" onPress={onSubmit}>
+              <Button color="primary" isDisabled={filesUploaded.length < 1} onPress={onSubmit}>
                 Save
               </Button>
             </ModalFooter>
