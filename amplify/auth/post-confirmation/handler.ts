@@ -54,7 +54,7 @@ const generateRandomUsername = (): string => {
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   console.log("Event Data: ", event)
-  const username = event.request.userAttributes.email || generateRandomUsername(); // Use email or auto-generate a username
+  const username = generateRandomUsername(); // Use email or auto-generate a username
 
   await client.graphql({
     query: createUser,

@@ -2,7 +2,7 @@
 
 import {Authenticator, Theme, ThemeProvider, useTheme} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import {CircularProgress} from '@nextui-org/react';
+import {CircularProgress, Spinner} from '@nextui-org/react';
 import {getCurrentUser} from 'aws-amplify/auth';
 import {Hub} from 'aws-amplify/utils';
 import {useRouter} from 'next/navigation';
@@ -33,6 +33,7 @@ export default function Page() {
 
       fetchUser();
   }, []);
+  
   const [loading, setLoading] = useState(false);
   const theme: Theme = {
     name: 'Auth Example Theme',
@@ -137,8 +138,7 @@ if (loading) {
     <Authenticator loginMechanisms={['email']} formFields={formFields} components={components}>
       {({ signOut, user }) => (
         <>
-          <h1>Hello {user?.username}</h1>
-          <button onClick={signOut}>Sign out</button>
+          <Spinner size="lg" color="success" />
         </>
       )}
     </Authenticator>

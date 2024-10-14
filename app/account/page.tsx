@@ -4,7 +4,7 @@ import '@aws-amplify/ui-react/styles.css';
 import {Button, useDisclosure} from "@nextui-org/react";
 import {getCurrentUser, signOut} from "aws-amplify/auth";
 import {generateClient} from 'aws-amplify/data';
-import {LogOut} from "lucide-react";
+import {EditIcon, LogOut} from "lucide-react";
 import {useRouter} from "next/navigation";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {type Schema} from '../../amplify/data/resource';
@@ -12,11 +12,11 @@ import {User} from "../auth/components/AuthButton";
 import TopNav from "../components/TopNav";
 import useUserListings from "../hooks/useUserListings";
 import ListingGrid from "../listing/components/ListingGrid";
-import EditPictureModal from "./components/EditPictureModal";
+import EditUserModal from './components/EditUserModal';
 import UserCard from "./components/UserCard";
 
 const client = generateClient<Schema>();
-type UserType = Schema["User"]["type"];
+export type UserType = Schema["User"]["type"];
 
 
 export default function Page() {
@@ -82,7 +82,6 @@ export default function Page() {
     fetchUserDetails()
   }, [user]);
 
-  //TODO: Move call to get user's listings here
   const {listings, error, loading} = useUserListings(user?.userId);
 
 
@@ -154,6 +153,12 @@ export default function Page() {
              <Button endContent={<UserRoundPlus className="amber-50 dark:stone-700" />} className="bg-emerald-400 text-amber-50 dark:text-stone-700" onClick={onSignOut}>
               Follow
             </Button> */}
+            {(user && userData) && <Button 
+              endContent={<EditIcon className="amber-50 dark:stone-700" />} 
+              className="bg-emerald-400 text-amber-50 dark:text-stone-700" 
+              onClick={onOpen}>
+              Edit Profile
+            </Button>}
             <Button 
               endContent={<LogOut className="amber-50 dark:stone-700" />} 
               className="bg-emerald-400 text-amber-50 dark:text-stone-700" 
@@ -180,8 +185,8 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <EditPictureModal 
-        onSubmit={onSubmitUserImage}
+      {(user && userData) && <EditUserModal
+        onSubmitUserImage={onSubmitUserImage}
         loading={detailsLoading} 
         setLoading={setDetailsLoading} 
         newProfileImage={newProfileImage} 
@@ -189,8 +194,10 @@ export default function Page() {
         currentImage={userData?.picture ?? null} 
         onClose={onClose} 
         onOpenChange={onOpenChange} 
-        isOpen={isOpen} 
-      />
+        isOpen={isOpen}
+        user={user}
+        userModel={userData}
+      />}
     </>
   );
 }
