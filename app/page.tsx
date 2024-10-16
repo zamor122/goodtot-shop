@@ -46,7 +46,7 @@ export default function Page() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
                 <ShirtIcon className="h-8 w-8" />
@@ -54,7 +54,7 @@ export default function Page() {
               </Link>
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors  border-2"
                 prefetch={false}
               >
                 <LaptopIcon className="h-8 w-8" />
@@ -62,7 +62,7 @@ export default function Page() {
               </Link>
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
                 <HomeIcon className="h-8 w-8" />
@@ -70,7 +70,7 @@ export default function Page() {
               </Link>
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
                 <BikeIcon className="h-8 w-8" />
@@ -78,7 +78,7 @@ export default function Page() {
               </Link>
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
                 <BookIcon className="h-8 w-8" />
@@ -86,7 +86,7 @@ export default function Page() {
               </Link>
               <Link
                 href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
                 <ToyBrickIcon className="h-8 w-8" />
@@ -110,12 +110,16 @@ export default function Page() {
                 <p className="text-muted-foreground">
                   Sell your unwanted items to a global audience and earn extra cash.
                 </p>
+                <Link href="/listing/new">
                 <Button className="mt-auto">List an Item</Button>
+                </Link>
               </div>
               <div className="bg-background rounded-md p-6 flex flex-col items-start gap-4">
                 <h3 className="text-xl font-semibold">Become a Seller</h3>
                 <p className="text-muted-foreground">Join our community of sellers and start earning today.</p>
+                <Link href="/auth">
                 <Button className="mt-auto">Sign Up</Button>
+                </Link>
               </div>
             </div>
           </div>
