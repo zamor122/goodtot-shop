@@ -3,7 +3,7 @@
 import {UseUserListingsResult} from "@/app/hooks/useUserListings";
 import {useCallback} from "react";
 import ListingCard from "./ListingCard";
-import {Spinner} from "@nextui-org/react";
+import {Button, Link, Spinner} from "@nextui-org/react";
 
 export default function ListingGrid({listings=null, loading=false, error=null}: UseUserListingsResult) {
 
@@ -21,7 +21,16 @@ export default function ListingGrid({listings=null, loading=false, error=null}: 
         <ListingCard key={listing.id} listing={listing} loading={loading} />
       ));
     } else {
-      return <p>No listings found.</p>; // If no listings are found
+      return (
+        <div className="flex flex-col gap-8">
+          <span>No listings found</span>
+          <Link href="/listing/new">
+          <Button className="bg-emerald-400 dark:text-slate-700 text-amber-50 w-full">
+              Create a listing
+          </Button>
+          </Link>
+        </div>
+      ); // If no listings are found
     }
   }, [listings, loading, error]);
 

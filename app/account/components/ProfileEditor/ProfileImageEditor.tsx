@@ -1,8 +1,7 @@
 import {FileUploader} from "@aws-amplify/ui-react-storage";
-import UserImage from "../UserImage";
-import {Button} from "@nextui-org/react";
 import {Dispatch, SetStateAction} from "react";
-import {User} from "@/app/auth/components/AuthButton";
+import UserImage from "../UserImage";
+import SaveButton from "./SaveButton";
 
 interface IProps {
   currentImage: string | null;
@@ -13,7 +12,6 @@ interface IProps {
   setLoading: Dispatch<SetStateAction<boolean>>;
   setFilesUploaded:  Dispatch<SetStateAction<string[]>>;
   uploadError: string;
-  user: User;
   filesUploaded: string[];
 }
 
@@ -70,13 +68,7 @@ export default function ProfileImageEditor({
             />
             {uploadError && <p className="text-red-500 text-sm">At least one file must be uploaded</p>}
           </div>
-          <Button
-            className="flex self-end bg-emerald-400 dark:text-slate-700 text-amber-50"
-            isDisabled={filesUploaded.length < 1}
-            onPress={onSubmitUserImage}
-          >
-            Save
-          </Button>
+          <SaveButton additionalClasses="self-end" isLoading={loading} isDisabled={filesUploaded.length < 1} onClick={onSubmitUserImage} />
         </div>
       </div>
     </div>

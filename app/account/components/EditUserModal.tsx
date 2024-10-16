@@ -7,6 +7,7 @@ import {Dispatch, ReactNode, SetStateAction, useState} from "react";
 import ProfileImageEditor from "./ProfileEditor/ProfileImageEditor";
 import UsernameEditor from "./ProfileEditor/UsernameEditor";
 import {UserType} from "../page";
+import AboutEditor from "./ProfileEditor/AboutEditor";
 interface IEditPictureModal {
   onOpenChange: () => void;
   isOpen: boolean;
@@ -18,7 +19,8 @@ interface IEditPictureModal {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
   user: User | null;
-  userModel: UserType;
+  userData: UserType;
+  setUserData: Dispatch<SetStateAction<UserType | null>>;
 }
 
 export type CompareStateValue = {
@@ -38,6 +40,8 @@ export default function EditUserModal({
   loading,
   setLoading,
   user,
+  userData, 
+  setUserData,
 }: IEditPictureModal): ReactNode {
   const [uploadError, _setUploadError] = useState<string>("");
   const [filesUploaded, setFilesUploaded] = useState<string[]>([]);
@@ -66,7 +70,7 @@ export default function EditUserModal({
         <>
           <ModalHeader className="flex flex-col gap-1">Edit your profile</ModalHeader>
           <ModalBody>
-            <form className="w-11/12 mx-auto p-4 transition-colors">
+            <form className="w-11/12 mx-auto p-4 transition-colors flex flex-col gap-6">
               {user && 
               <ProfileImageEditor 
                 currentImage={currentImage} 
@@ -78,9 +82,9 @@ export default function EditUserModal({
                 uploadError={uploadError}
                 setFilesUploaded={setFilesUploaded}
                 filesUploaded={filesUploaded}
-                user={user}
               />}
-              {user && <UsernameEditor user={user} />}
+              {userData && <UsernameEditor userData={userData} setUserData={setUserData} />}
+              {userData && <AboutEditor userData={userData} setUserData={setUserData} />}
             </form>
             <ModalFooter>
               <Button color="danger" variant="flat" onPress={onCloseModal}>

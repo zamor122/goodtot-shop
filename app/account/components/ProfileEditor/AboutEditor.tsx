@@ -1,4 +1,4 @@
-import {Button, Input} from "@nextui-org/react";
+import {Button, Input, Textarea} from "@nextui-org/react";
 import {ChangeEvent, Dispatch, FC, SetStateAction, useCallback, useState} from "react";
 import {CompareStateValue} from "../EditUserModal";
 import {UserType} from "../../page";
@@ -13,30 +13,30 @@ interface IProps {
   setUserData: Dispatch<SetStateAction<UserType | null>>;
 }
 
-export default function UsernameEditor({userData, setUserData}: IProps) {
+export default function AboutEditor({userData, setUserData}: IProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [usernameUpdateValue, setUsernameUpdateValue] = useState<CompareStateValue>({
-    old: userData?.username ?? "",
-    new: userData?.username ?? ""
+  const [aboutValue, setAboutValue] = useState<CompareStateValue>({
+    old: userData?.about ?? "",
+    new: userData?.about ?? ""
   });
 
-  const onSubmitUsernameChange = async () => {
+  const onSubmitAboutChange = async () => {
     setIsLoading(true); // Set loading to true at the start of the async operation
     try {
-      if (userData && userData.userId && usernameUpdateValue.new !== "") {
+      if (userData && userData.userId && aboutValue.new !== "") {
         const { userId } = userData;
-        if (usernameUpdateValue.old !== usernameUpdateValue.new) {
+        if (aboutValue.old !== aboutValue.new) {
           const { data } = await client.models.User.update({
             id: userId,
-            username: usernameUpdateValue.new,
+            about: aboutValue.new,
           });
 
           if (data) {
             setUserData(data); // Set new user data
-            setUsernameUpdateValue({
-              ...usernameUpdateValue,
-              old: data.username ?? "", // Update the "old" username with the new one
-              new: data.username ?? "",
+            setAboutValue({
+              ...aboutValue,
+              old: data.about ?? "", // Update the "old" about with the new one
+              new: data.about ?? "",
             });
           }
         }
@@ -49,35 +49,35 @@ export default function UsernameEditor({userData, setUserData}: IProps) {
   };
 
 
-  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUsernameUpdateValue({
-      ...usernameUpdateValue,
+  const handleAboutChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAboutValue({
+      ...aboutValue,
       new: e.target.value, // Update the new value as the user types
     });
   };
 
   const isSaveDisabled = 
-    usernameUpdateValue.old === usernameUpdateValue.new || 
-              usernameUpdateValue.new === "" || isLoading
+    aboutValue.old === aboutValue.new || 
+    aboutValue.new === "" || isLoading
 
   return (
     <div className="w-full">
-      <span className="border-b-2 w-full flex mb-4 border-emerald-400">Username</span>
+      <span className="border-b-2 w-full flex mb-4 border-emerald-400">About</span>
       <div className="flex items-center justify-between">
         {/* Textbox taking 2/3 of the width */}
         <div className="w-2/3">
-          <Input
-            type="text"
-            maxLength={25}
-            onChange={handleUsernameChange}
-            placeholder="Enter a username"
-            value={usernameUpdateValue.new}
+          <Textarea
+            maxLength={225}
+            maxRows={5}
+            onChange={handleAboutChange}
+            placeholder="Write something about yourself"
+            value={aboutValue.new}
           />
         </div>
         
         {/* Button aligned to the right */}
         <div className="ml-4">
-          <SaveButton isLoading={isLoading} isDisabled={isSaveDisabled} onClick={onSubmitUsernameChange}  />
+          <SaveButton isLoading={isLoading} isDisabled={isSaveDisabled} onClick={onSubmitAboutChange}  />
         </div>
       </div>
     </div>

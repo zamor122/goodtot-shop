@@ -102,10 +102,8 @@ export default function Page() {
         if (response.data ) {
           setNewProfileImage(null);
           setUserData(response.data);
-          onClose();
         }
   
-        onClose();
       } catch (error: any) {
         setUploadError(`Error deleting user image: ${error}`);
       } finally {
@@ -128,7 +126,6 @@ export default function Page() {
           if (response.data ) {
             setUserData(response.data);
             setNewProfileImage(response.data.picture);
-            onClose();
           }
 
         }
@@ -186,6 +183,8 @@ export default function Page() {
         </div>
       </div>
       {(user && userData) && <EditUserModal
+        userData={userData}
+        setUserData={setUserData}
         onSubmitUserImage={onSubmitUserImage}
         loading={detailsLoading} 
         setLoading={setDetailsLoading} 
@@ -196,7 +195,6 @@ export default function Page() {
         onOpenChange={onOpenChange} 
         isOpen={isOpen}
         user={user}
-        userModel={userData}
       />}
     </>
   );
