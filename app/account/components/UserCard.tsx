@@ -75,7 +75,7 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
           <Skeleton isLoaded={!detailsLoading}>
             <div className="flex gap-4">
               {/* TODO: wrap text to multiple lines */}
-              <div className="w-full text-xl sm:text-4xl overflow-hidden text-ellipsis whitespace-normal" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+              <div className="w-full font-bold text-xl sm:text-4xl overflow-hidden text-ellipsis whitespace-normal" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                 {usernameText}
                 </div>
                 {userVerified && <CheckCircle2 className="h-7 w-7 text-emerald-400" />}

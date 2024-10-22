@@ -2,41 +2,50 @@
 
 import {UseUserListingsResult} from "@/app/hooks/useUserListings";
 import {useCallback} from "react";
-import ListingCard from "./ListingCard";
-import {Button, Link, Spinner} from "@nextui-org/react";
+import ListingCardWrapper from "./ListingCardWrapper";
+import ListingInfo, {ListingEmpty, ListingLoading} from "./ListingInfo";
 
-export default function ListingGrid({listings=null, loading=false, error=null}: UseUserListingsResult) {
+
+export default function ListingGrid({listings=null, loading=false, error=null, firstLoad=true}: UseUserListingsResult) {
 
   const renderListings = useCallback(() => {
-    if (loading) {
-      return <Spinner color="success" size="lg" /> // Show loading state
-    }
-
+    // Prioritize error handling over loading
     if (error) {
-      return <p>Error: {error}</p>; // Show error state
+      return <div>Error loading listings: {error}</div>;
     }
-
-    if (listings && listings.length > 0) {
-      return listings.map((listing) => (
-        <ListingCard key={listing.id} listing={listing} loading={loading} />
+  
+    // If listings are still loading and there's no error, show a loading placeholder
+    if (loading) {
+      const emptyArr = Array(4).fill(null);
+      return emptyArr.map((_, index) => (
+        <ListingCardWrapper key={index} link="/listing/new">
+          <ListingLoading />
+        </ListingCardWrapper>
       ));
-    } else {
-      return (
-        <div className="flex flex-col gap-8">
-          <span>No listings found</span>
-          <Link href="/listing/new">
-          <Button className="bg-emerald-400 dark:text-slate-700 text-amber-50 w-full">
-              Create a listing
-          </Button>
-          </Link>
-        </div>
-      ); // If no listings are found
     }
-  }, [listings, loading, error]);
+  
+    // Handle the case where listings is undefined or null explicitly
+    if (!listings || listings.length === 0) {
+      return <div>No listings available.</div>;
+    }
+  
+    // If listings are available, map over them to render the individual cards
+    const listingsRendered =  listings.map((listing) => {
+      const { id } = listing;
+  
+      return (
+        <ListingCardWrapper key={id} link={`/listings/${id}`}>
+          <ListingInfo listing={listing} loading={loading} />
+        </ListingCardWrapper>
+      );
+    });
+
+    return listingsRendered.concat(<ListingCardWrapper key="create" link="/listing/new"><ListingEmpty /></ListingCardWrapper>)
+  }, [listings, loading, error, firstLoad]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {renderListings()}
-    </div>
+<div className="grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 grid-cols-2 gap-6 justify-items-center place-items-center">
+  {renderListings()}
+</div>
   );
 }

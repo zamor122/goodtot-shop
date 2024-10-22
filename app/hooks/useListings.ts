@@ -30,6 +30,7 @@ export default function useListings(): UseUserListingsResult {
             setError(response.errors[0].message);
           } else if (response.data) {
             setListings(response.data);
+            setError(null);
           }
       } catch (err: any) {
         setError(`Error: ${err.message}`);

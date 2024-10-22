@@ -19,28 +19,32 @@ export default function useUserListings(userId: string | undefined): UseUserList
 
   useEffect(() => {
     async function fetchUserListings() {
+      // Only proceed if userId is defined
+      if (!userId) {
+        setLoading(true);  // Still show a loading state if userId is undefined
+        return;
+      }
+
       setLoading(true);
 
       try {
-        if (userId) {
-          const response = await client.models.Listing.list({
-            filter: {
-              userId: {
-                eq: userId,
-              },
+        const response = await client.models.Listing.list({
+          filter: {
+            userId: {
+              eq: userId,
             },
-          });
+          },
+        });
 
-          if (response.errors) {
-            setError(response.errors[0].message);
-          } else if (response.data) {
-            setError(null);
-            setListings(response.data);
-          }
-        } else {
-          setError("No user found");
+        if (response.errors) {
+          setListings(null);
+          setError(response.errors[0].message);
+        } else if (response.data) {
+          setError(null);
+          setListings(response.data);
         }
       } catch (err: any) {
+        setListings(null);
         setError(`Error: ${err.message}`);
       } finally {
         setLoading(false);

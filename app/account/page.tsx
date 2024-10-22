@@ -82,7 +82,7 @@ export default function Page() {
     fetchUserDetails()
   }, [user]);
 
-  const {listings, error, loading} = useUserListings(user?.userId);
+  const {listings, error, loading, firstLoad} = useUserListings(user?.userId);
 
 
   const onDeleteUserImage = async () => {
