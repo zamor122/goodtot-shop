@@ -6,7 +6,7 @@ import ListingCardWrapper from "./ListingCardWrapper";
 import ListingInfo, {ListingEmpty, ListingLoading} from "./ListingInfo";
 
 
-export default function ListingGrid({listings=null, loading=false, error=null, firstLoad=true}: UseUserListingsResult) {
+export default function ListingGrid({listings=null, loading=false, error=null}: UseUserListingsResult) {
 
   const renderListings = useCallback(() => {
     // Prioritize error handling over loading
@@ -41,10 +41,10 @@ export default function ListingGrid({listings=null, loading=false, error=null, f
     });
 
     return listingsRendered.concat(<ListingCardWrapper key="create" link="/listing/new"><ListingEmpty /></ListingCardWrapper>)
-  }, [listings, loading, error, firstLoad]);
+  }, [listings, loading, error]);
 
   return (
-<div className="grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 grid-cols-2 gap-6 justify-items-center place-items-center">
+<div className="grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 gap-6 justify-items-center place-items-center">
   {renderListings()}
 </div>
   );

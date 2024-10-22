@@ -10,6 +10,7 @@ import useListings from "./hooks/useListings";
 import ListingGrid from "./listing/components/ListingGrid";
 import {type Schema} from '../amplify/data/resource';
 import {generateClient} from 'aws-amplify/data';
+import Image from "next/image";
 
 const client = generateClient<Schema>();
 
@@ -40,10 +41,10 @@ export default function Page() {
     <>
     <TopNav user={user} />
     <div className="flex flex-col min-h-screen">
-        <section className="py-12 md:py-16 lg:py-20">
+        <section className="py-8">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Featured Categories</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
               <Link
                 href="#"
                 className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
@@ -73,14 +74,6 @@ export default function Page() {
                 className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
                 prefetch={false}
               >
-                <BikeIcon className="h-8 w-8" />
-                <span className="text-sm font-medium">Vehicles</span>
-              </Link>
-              <Link
-                href="#"
-                className="bg-muted rounded-md p-4 flex flex-col items-center justify-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors border-2"
-                prefetch={false}
-              >
                 <BookIcon className="h-8 w-8" />
                 <span className="text-sm font-medium">Books</span>
               </Link>
@@ -95,17 +88,11 @@ export default function Page() {
             </div>
           </div>
         </section>
-        <section className="py-12 md:py-16 lg:py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
-            <ListingGrid listings={listings} loading={loading} error={error} /> 
-          </div>
-        </section>
-        <section className="py-12 md:py-16 lg:py-20 bg-muted">
+        <section className="py-4 bg-muted">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Sell Your Items</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-background rounded-md p-6 flex flex-col items-start gap-4">
+              <div className="bg-background rounded-lg p-6 flex flex-col items-start gap-4">
                 <h3 className="text-xl font-semibold">List Your Items</h3>
                 <p className="text-muted-foreground">
                   Sell your unwanted items to a global audience and earn extra cash.
@@ -114,7 +101,7 @@ export default function Page() {
                 <Button className="mt-auto">List an Item</Button>
                 </Link>
               </div>
-              <div className="bg-background rounded-md p-6 flex flex-col items-start gap-4">
+              <div className="bg-background rounded-lg p-6 flex flex-col items-start gap-4">
                 <h3 className="text-xl font-semibold">Become a Seller</h3>
                 <p className="text-muted-foreground">Join our community of sellers and start earning today.</p>
                 <Link href="/auth">
@@ -124,10 +111,16 @@ export default function Page() {
             </div>
           </div>
         </section>
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
+            <ListingGrid listings={listings} loading={loading} error={error} /> 
+          </div>
+        </section>
       <footer className="bg-muted py-6">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MountainIcon className="h-6 w-6" />
+          <Image src="../goodtot.svg" width={150} height={80} alt="Goodtot Shop" />
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <Link href="#" className="text-muted-foreground hover:text-foreground" prefetch={false}>
@@ -226,26 +219,6 @@ function LaptopIcon(props: any) {
       strokeLinejoin="round"
     >
       <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" />
-    </svg>
-  )
-}
-
-
-function MountainIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
   )
 }

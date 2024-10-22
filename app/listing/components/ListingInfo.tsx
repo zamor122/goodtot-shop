@@ -2,6 +2,8 @@ import {StorageImage} from "@aws-amplify/ui-react-storage";
 import {Card, CardBody, CardFooter, Link, Skeleton} from "@nextui-org/react";
 import {type Schema} from '../../../amplify/data/resource';
 import {CirclePlus, Icon} from "lucide-react";
+import {formatLocation} from "@/app/helpers/LocationHelper";
+import {formatTimeAgo} from "@/app/helpers/TimeAgoHelper";
 
 type ListingType = Schema["Listing"]["type"]
 interface IListingCardProps {
@@ -37,12 +39,13 @@ export function ListingLoading() {
 
 export default function ListingInfo({loading, listing}: IListingCardProps) {
   if(listing) {
-    const {id, title, description, price, images} = listing;
+    const {id, title, description, price, images, locationDisplayName, createdAt} = listing;
+    console.log("Location: ", locationDisplayName)
     const thumbnailImage = images && images[0]
     return (
       <>
   {/* CardBody - Ensure the image fills the CardBody */}
-    <CardBody className="flex flex-col h-full w-full items-start p-0 m-0 bg-white overflow-hidden">
+    <CardBody className="flex flex-col h-full w-full items-start p-0 m-0 overflow-hidden">
       <Skeleton isLoaded={!loading} className="w-full">
         <StorageImage
           path={thumbnailImage ?? "/placeholder.svg"}
@@ -54,17 +57,20 @@ export default function ListingInfo({loading, listing}: IListingCardProps) {
     </CardBody>
 
   
-  <CardFooter className="p-4 flex flex-col h-1/2 items-start">
+  <CardFooter className="p-4 flex flex-col h-1/2 items-start py-2 px-4">
     {/* Price and Location at the Top */}
-    <Skeleton isLoaded={!loading} className="w-full">
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-semibold">${price}</span>
-        <span className="text-sm text-muted-foreground">100 miles away</span>
+    <Skeleton isLoaded={!loading} className="w-full mb-4">
+      <div className="flex items-start justify-between">
+        <span className="text-xl font-semibold dark:text-stone-50 slate-700">${price}</span>
+        <div>
+          <span className="text-sm font-normal dark:text-stone-400 slate-300 self-end">{formatLocation(locationDisplayName)}</span>
+          <span className="text-sm font-light truncate overflow-hidden text-ellipsis whitespace-nowrap text-balance line-clamp-2 dark:text-stone-400 slate-200 absolute right-0">{formatTimeAgo(createdAt)}</span>
+        </div>
       </div>
     </Skeleton>
 
     <Skeleton isLoaded={!loading} className="w-full">
-  <p className="text-lg font-medium truncate overflow-hidden text-ellipsis whitespace-nowrap">
+  <p className="text-md truncate overflow-hidden text-ellipsis whitespace-nowrap dark:text-stone-300 slate-400">
     {title}
   </p>
 </Skeleton>
@@ -72,9 +78,9 @@ export default function ListingInfo({loading, listing}: IListingCardProps) {
 
     {/* Description */}
     <Skeleton isLoaded={!loading} className="w-full mt-2">
-      <p className="text-muted-foreground truncate overflow-hidden text-ellipsis whitespace-nowrap text-balance">
+      <span className="text-sm font-light truncate overflow-hidden text-ellipsis whitespace-nowrap text-balance line-clamp-2 dark:text-stone-400 slate-300">
         {description}
-      </p>
+      </span>
     </Skeleton>
   </CardFooter>
 
