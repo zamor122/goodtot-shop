@@ -28,7 +28,15 @@ export default function UserImage({
   const image = useCallback(() => {
     if (path) {
       const imgElement = (
-        <StorageImage path={path} alt={alt} style={{ objectFit: "contain" }} />
+        <StorageImage
+          path={path}
+          alt={alt}
+          style={{
+            objectFit: "cover",  // Ensures the image fills the container while keeping its aspect ratio
+            width: "100%",       // Makes sure the image takes up the full width of the container
+            height: "100%",      // Makes sure the image takes up the full height of the container
+          }}
+        />
       );
 
       const verifiedBadge = (
@@ -45,7 +53,7 @@ export default function UserImage({
       );
 
       return (
-        <div className={`w-40 h-56 rounded-md border-2 border-emerald-400 overflow-hidden ${editable ? "hover:cursor-pointer hover:opacity-75 transition" : ""}`}>
+        <div className={`rounded-md border-2 border-emerald-400 overflow-hidden box-border ${editable ? "hover:cursor-pointer hover:opacity-75 transition" : ""}`}>
           {verified ? verifiedBadge : imgElement}
         </div>
       );
@@ -91,7 +99,7 @@ export default function UserImage({
         content={<CheckCircle2 className="text-emerald-400 bg-transparent dark:bg-stone-700 rounded-xl" />}
         className="bg-white dark:bg-transparent border-0"
         placement="bottom-right"
-      >x
+      >
         {profilePicture}
       </Badge>
     ) : (

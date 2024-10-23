@@ -69,7 +69,7 @@ const UserCard: FC<IProps> = ({ mode, userDetails, detailsLoading, onPressDelete
       </CardHeader>
       <CardBody className="flex sm:align-start align-center">
         <div className="sm:grid sm:grid-rows-1 sm:grid-flow-col sm:gap-6 flex flex-col">
-          <div className="flex sm:flex-row flex-col gap-6 items-center">
+          <div className="flex sm:flex-row flex-col gap-6 items-center w-1/2 h-auto">
             <UserImage onPressEditImage={onPressEditPicture} onPressDeleteImage={onPressDeletePicture} path={userDetails?.picture} alt="Profile Image" loading={detailsLoading} verified={true} editable={true} />
             <div className="flex flex-col items-center sm:items-start justify-center">
           <Skeleton isLoaded={!detailsLoading}>

@@ -8,11 +8,7 @@ import {User} from "./auth/components/AuthButton";
 import TopNav from "./components/TopNav";
 import useListings from "./hooks/useListings";
 import ListingGrid from "./listing/components/ListingGrid";
-import {type Schema} from '../amplify/data/resource';
-import {generateClient} from 'aws-amplify/data';
 import Image from "next/image";
-
-const client = generateClient<Schema>();
 
 export default function Page() {
   const [user, setUser] = useState<User | null>(null);

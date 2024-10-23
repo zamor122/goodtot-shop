@@ -32,7 +32,7 @@ export default function ProfileImageEditor({
       <div className="w-full">
         <span className="border-b-2 w-full flex mb-4 border-emerald-400">Profile picture</span>
         <div className="sm:justify-between flex sm:flex-row flex-col gap-6 items-center">
-          <div className="w-1/2 flex justify-center items-center">
+          <div className="w-1/2 h-full flex justify-center items-center">
             <UserImage
               path={newProfileImage}
               onPressEditImage={onSubmitUserImage}
