@@ -12,14 +12,15 @@ import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import "react-image-gallery/styles/css/image-gallery.css";
-import {type Schema} from '../../../amplify/data/resource';
+import {data, type Schema} from '../../../amplify/data/resource';
+import PriceField from '../components/forms/fields/PriceField';
 
 const client = generateClient<Schema>();
 
-interface ListingFormInputs {
+export interface ListingFormInputs {
   title: string;
   description: string;
-  price: number;
+  price: string;
   zipcode: string;
   category: string;
   files: string[];
@@ -46,7 +47,7 @@ export default function Page() {
   const [zipcodeLoading, setZipcodeLoading] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(false);
-  const {register, handleSubmit, watch, formState: {errors, isValid, isSubmitted}} = useForm<ListingFormInputs>({
+  const {register, handleSubmit, watch, setValue, formState: {errors, isValid, isSubmitted}} = useForm<ListingFormInputs>({
     defaultValues: {
       title: "",
     }
@@ -79,11 +80,11 @@ export default function Page() {
       const latitudeVal = parseInt(zipcodeResponse?.lat ?? "0")
       const longitudeVal = parseInt(zipcodeResponse?.lon ?? "0")
       const geocodeDisplay = zipcodeResponse?.display_name
+      const priceToEnter = parseInt(data.price);
       try {
-
         const {errors, data: newListing} = await client.models.Listing.create({
           title: data.title,
-          price: data.price,
+          price: priceToEnter,
           description: data.description,
           userId: user.userId,
           zipCode: zipcode,
@@ -163,32 +164,7 @@ export default function Page() {
                 />
                 {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
               </div>
-
-              <div>
-                <label htmlFor="price" className="text-sm font-medium dark:text-gray-300">Price ($)</label>
-                <Input
-                  startContent={<span className="text-default-400 text-small">$</span>}
-                  type="number"
-                  id="price"
-                  {...register("price", {
-                    required: {
-                      value: true,
-                      message: "Price is required",
-                    },
-                    max: {
-                      value: 1000,
-                      message: "Price must be less than $1000"
-                    },
-                    min: {
-                      value: 0,
-                      message: "Price must be greater than $1 if item is NOT free"
-                    }
-                  })}
-                  className={`mt-1 block w-full ${errors.price ? "border-red-500" : ""}`}
-                />
-                {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
-              </div>
-
+              <PriceField register={register} errors={errors} setValue={setValue} />
             </div>
 
             <div className="mb-4">
