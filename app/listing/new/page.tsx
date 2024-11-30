@@ -5,7 +5,7 @@ import TopNav from '@/app/components/TopNav';
 import ZipCodeService, {GeocodeResponse} from '@/app/services/geocode';
 import {FileUploader} from '@aws-amplify/ui-react-storage';
 import '@aws-amplify/ui-react/styles.css';
-import {Button, Card, CardHeader, Input, Select, SelectItem, Textarea} from '@nextui-org/react';
+import {Button, Card, CardHeader, Input, Select, SelectItem, Skeleton, Textarea} from '@nextui-org/react';
 import {getCurrentUser} from 'aws-amplify/auth';
 import {generateClient} from 'aws-amplify/data';
 import {useRouter} from 'next/navigation';
@@ -57,19 +57,22 @@ export default function Page() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      setPageLoading(true)
       try {
         setUser(prevState => ({...prevState, loading: true}));
         const user = await getCurrentUser();
         setUser(user);
       } catch (e) {
         setUser(null);
+        router.replace("/");
       } finally {
         setUser(prevState => ({...prevState, loading: false}));
+        setPageLoading(false);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [router]);
 
 
   const onSubmit = async (data: ListingFormInputs) => {

@@ -31,7 +31,7 @@ export default function Page() {
   }, []);
 
   const {listings, loading, error} = useListings();
-  
+  console.log("User: ", user)
 
   return (
     <>
@@ -93,7 +93,7 @@ export default function Page() {
                 <p className="text-muted-foreground">
                   Sell your unwanted items to a global audience and earn extra cash.
                 </p>
-                <Link href="/listing/new">
+                <Link href={user?.userId && !user.loading ? "/listing/new" : "/auth"}>
                 <Button className="mt-auto">List an Item</Button>
                 </Link>
               </div>
@@ -110,7 +110,7 @@ export default function Page() {
         <section className="py-4">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Featured Items</h2>
-            <ListingGrid listings={listings} loading={loading} error={error} /> 
+            <ListingGrid listings={listings} loading={loading} error={error} user={user} /> 
           </div>
         </section>
       <footer className="bg-muted py-6">

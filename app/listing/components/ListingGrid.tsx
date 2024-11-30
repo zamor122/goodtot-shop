@@ -6,7 +6,9 @@ import ListingCardWrapper from "./ListingCardWrapper";
 import ListingInfo, {ListingEmpty, ListingLoading} from "./ListingInfo";
 
 
-export default function ListingGrid({listings=null, loading=false, error=null}: UseUserListingsResult) {
+export default function ListingGrid({listings=null, loading=false, error=null, user=null}: UseUserListingsResult) {
+
+  const listingLink = user?.userId ? "/listing/new" : "/auth";
 
   const renderListings = useCallback(() => {
     // Prioritize error handling over loading
@@ -18,7 +20,7 @@ export default function ListingGrid({listings=null, loading=false, error=null}: 
     if (loading) {
       const emptyArr = Array(4).fill(null);
       return emptyArr.map((_, index) => (
-        <ListingCardWrapper key={index} link="/listing/new">
+        <ListingCardWrapper key={index} link={listingLink}>
           <ListingLoading />
         </ListingCardWrapper>
       ));
@@ -26,7 +28,9 @@ export default function ListingGrid({listings=null, loading=false, error=null}: 
   
     // Handle the case where listings is undefined or null explicitly
     if (!listings || listings.length === 0) {
-      return <div>No listings available.</div>;
+      return <ListingCardWrapper key={"empty"} link={listingLink}>
+      <ListingEmpty />
+    </ListingCardWrapper>
     }
   
     // If listings are available, map over them to render the individual cards
@@ -40,8 +44,8 @@ export default function ListingGrid({listings=null, loading=false, error=null}: 
       );
     });
 
-    return listingsRendered.concat(<ListingCardWrapper key="create" link="/listing/new"><ListingEmpty /></ListingCardWrapper>)
-  }, [listings, loading, error]);
+    return listingsRendered.concat(<ListingCardWrapper key="create" link={listingLink}><ListingEmpty /></ListingCardWrapper>)
+  }, [listings, loading, error, listingLink]);
 
   return (
 <div className="grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 gap-6 justify-items-center place-items-center">

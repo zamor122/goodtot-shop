@@ -1,6 +1,7 @@
 import {generateClient} from 'aws-amplify/data';
 import {useEffect, useState} from "react";
 import {type Schema} from '../../amplify/data/resource';
+import {User} from '../auth/components/AuthButton';
 
 const client = generateClient<Schema>();
 
@@ -10,6 +11,7 @@ export interface UseUserListingsResult {
   listings: ListingType[] | null;
   loading: boolean;
   error: string | null;
+  user: User | null;
 }
 
 export default function useUserListings(userId: string | undefined): UseUserListingsResult {
